@@ -27,6 +27,7 @@ fn main() {
 							data
                     	}
                     	Err(error) => {
+                    		Log::error(&format!("{}", header.source_addr()));
                     	    Log::error(&format!("{}", error));
                     		(String::from("0.0"), String::from("0.0"))
                     	}
