@@ -2,7 +2,6 @@ extern crate etherparse;
 extern crate pcap;
 
 use serde_json::Value;
-use std::rc::Rc;
 use ureq;
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
@@ -27,11 +26,8 @@ struct Locator {
 }
 
 impl Locator {
-    pub fn get(ip: str) -> Rc<Self> {
-        let url = format!(
-            "http://ipwhois.app/json/",
-            ip
-        );
+    pub fn get(ip: &str) -> std::result::Result<(f64, f64), String> {
+        let url = format!("http://ipwhois.app/json/{}", ip);
 
 		let response = ureq::get(&url).call();
 
@@ -42,50 +38,50 @@ impl Locator {
 		let data = match response.into_string() {
 			Ok(data) => data,
 			Err(error) => {
-				eprintln!("Error transforming to string: {}", error);
+				return Err(format!("Error transforming to string: {}", error));
 			}
 		};
 
 		let parsed_json: Value = match serde_json::from_str(&data) {
 			Ok(parsed_json) => parsed_json,
 			Err(error) => {
-				eprintln!("Error parsing json: {}", error);
+				return Err(format!("Error parsing json: {}", error));
 			}
     	};
 
 		let latitude = match &parsed_json["latitude"] {
 			Value::Number(latitude) => latitude,
 			_ => {
-				eprintln!("Unable to find latitude in parsed JSON");
+				return Err("Unable to find latitude in parsed JSON".to_string());
 			}
 		};
 
 		let latitude = match latitude.as_f64() {
 			Some(f64_value) => f64_value,
 			None => {
-				eprintln!("Unexpected latitude. Not a float 64");
+				return Err(format!("Unexpected latitude. Not a float 64"));
 			}
 		};
 
 		let longitude = match &parsed_json["longitude"] {
 			Value::Number(longitude) => longitude,
 			_ => {
-				eprintln!("Unable to find longitude in parsed JSON");
+				return Err("Unable to find longitude in parsed JSON".to_string());
 			}
 		};
 
-		let longitude = match latitude.as_f64() {
+		let longitude = match longitude.as_f64() {
 			Some(f64_value) => f64_value,
 			None => {
-				eprintln!("Unexpected longitude. Not a float 64");
+				return Err(format!("Unexpected latitude. Not a float 64"));
 			}
 		};
 
-        let result = Rc::new(Locator {
-            latitude,
-            longitude,
-        });
+        let result =(
+        	longitude,
+        	latitude,
+        );
 
-        return result;
+        Ok(result)
     }
 }
