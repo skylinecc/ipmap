@@ -3,10 +3,15 @@ extern crate pcap;
 
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
+use casual_logger::{Level, Log, Opt};
 
 mod locator;
 
 fn main() {
+	Log::set_opt(Opt::Release);
+	Log::remove_old_logs();
+	Log::set_level(Level::Notice);
+
     let mut cap = Device::lookup().unwrap().open().unwrap();
 
     while let Ok(packet) = cap.next() {
@@ -22,7 +27,7 @@ fn main() {
 							data
                     	}
                     	Err(error) => {
-
+                    	    Log::error(&format!("{}", error));
                     		(String::from("0.0"), String::from("0.0"))
                     	}
                     };
