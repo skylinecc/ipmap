@@ -14,16 +14,15 @@ fn main() {
             Err(value) => println!("IP error {:?}", value),
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
-					println!("IP Address: {:?}", header.source_addr());
-					
                     match locator::Locator::get(format!("{}", header.source_addr())) {
                     	Ok(data) => {
+                    		println!("IP Address: {:?}", header.source_addr());
                     		println!("Latitude: {}", data.0);
 							println!("Longitude: {}", data.1);
 							data
                     	}
                     	Err(error) => {
-							eprintln!("ERROR: {}", error);
+
                     		(String::from("0.0"), String::from("0.0"))
                     	}
                     };
