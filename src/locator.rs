@@ -12,6 +12,7 @@ impl Locator {
             eprintln!("Cannot connect to ipwhois.app");
         };
 
+        // Turn the data into a string.
         let data = match response.into_string() {
             Ok(data) => data,
             Err(error) => {
@@ -19,6 +20,7 @@ impl Locator {
             }
         };
 
+        // Turn the data into parsed_json
         let parsed_json: Value = match serde_json::from_str(&data) {
             Ok(parsed_json) => parsed_json,
             Err(error) => {
@@ -26,6 +28,7 @@ impl Locator {
             }
         };
 
+        // Get latitude from parsed_json
         let latitude = match &parsed_json["latitude"] {
             Value::String(latitude) => latitude,
             _ => {
@@ -33,6 +36,7 @@ impl Locator {
             }
         };
 
+        // Get longitude from parsed_json
         let longitude = match &parsed_json["longitude"] {
             Value::String(longitude) => longitude,
             _ => {

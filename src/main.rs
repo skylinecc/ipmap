@@ -8,17 +8,21 @@ use casual_logger::{Level, Log, Opt};
 mod locator;
 
 fn main() {
+	// Set log settings...
 	Log::set_opt(Opt::Release);
 	Log::remove_old_logs();
 	Log::set_level(Level::Notice);
 
     let mut cap = Device::lookup().unwrap().open().unwrap();
 
+	// Loop for when it is getting packets. Ethan wrote it so I have no idea WTF is in here. Just ignore most of it.
     while let Ok(packet) = cap.next() {
         match SlicedPacket::from_ethernet(packet.data) {
+        	// If there is an error, print it. If there is not run stuff.
             Err(value) => println!("IP error {:?}", value),
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
+                	// Run locator with the IP address, which returns Latitude and Longitude.
                     match locator::Locator::get(format!("{}", header.source_addr())) {
                     	Ok(data) => {
                     		println!("IP Address: {:?}", header.source_addr());
@@ -26,6 +30,7 @@ fn main() {
 							println!("Longitude: {}", data.1);
 							data
                     	}
+                    	// If there was an error, send it to the logs.
                     	Err(error) => {
                     		Log::error(&format!("{}", header.source_addr()));
                     	    Log::error(&format!("{}", error));
