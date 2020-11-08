@@ -1,8 +1,8 @@
 extern crate etherparse;
 extern crate pcap;
 extern crate open;
-extern crate pnet;
 
+use std::collections::HashSet;
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
 use casual_logger::{Level, Log, Opt};
@@ -35,6 +35,7 @@ fn main() {
     });
 
 	let mut mapdata = std::fs::File::create("/tmp/ipmap.data").expect("Couldn't create /tmp/ipmap.data");
+    let mut ip_index = HashSet::new();
 
 	// Set log settings
 	Log::set_opt(Opt::Release);
@@ -49,31 +50,32 @@ fn main() {
             Err(value) => println!("IP error {:?}", value),
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
-					// Run locator with the IP address, which returns Latitude and Longitude.
-					if header.source_addr().is_private() {
-						println!("{}", header.source_addr());
-						continue;
-					}
-                    match locator::Locator::get(format!("{}", header.source_addr())) {
-                    	Ok(data) => {
-							let json = json!({
-								"location": {
-									"ip": header.source_addr(),
-									"latitude": data.1,
-									"longitude": data.0,
-								}
-                    	    });
-                    	  //  println!("{}", json);
-                    		mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.html");
-							data
-                    	}
-                    	// If there was an error, send it to the logs.
-                    	Err(error) => {
-                    		Log::error(&format!("{}", header.source_addr()));
-                    	    Log::error(&format!("{}", error));
-                    		(String::from("0.0"), String::from("0.0"))
-                    	}
-                    };
+					if !ip_index.contains(&format!("{}", header.source_addr())) {
+                        ip_index.insert(header.source_addr().to_string());
+                        if !header.source_addr().is_private() {
+                            // Run locator with the IP address, which returns Latitude and Longitude.
+                            match locator::Locator::get(format!("{}", header.source_addr())) {
+                    	        Ok(data) => {
+							        let json = json!({
+								        "location": {
+									        "ip": header.source_addr(),
+									        "latitude": data.1,
+									        "longitude": data.0,
+								    }
+                                });
+
+                    		    mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.data");
+							    data
+                    	        }
+                    	        // If there was an error, send it to the logs.
+                    	        Err(error) => {
+                    		        Log::error(&format!("{}", header.source_addr()));
+                    	            Log::error(&format!("{}", error));
+                    		        (String::from("0.0"), String::from("0.0"))
+                                }
+                            };
+                        };
+                    }
                 }
                 Some(_) | None => (),
             },
