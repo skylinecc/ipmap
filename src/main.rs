@@ -10,6 +10,7 @@ use std::io::prelude::*;
 use std::thread;
 use std::fs;
 use std::path::Path;
+use serde_json::json;
 
 mod locator;
 
@@ -51,9 +52,15 @@ fn main() {
                 	// Run locator with the IP address, which returns Latitude and Longitude.
                     match locator::Locator::get(format!("{}", header.source_addr())) {
                     	Ok(data) => {
-                    		mapdata.write_all(format!("\n{}    {}", data.0, data.1).as_bytes()).expect("Couldn't write to /tmp/ipmap.html");
-                    		println!("Latitude: {}", data.0);
-							println!("Longitude: {}", data.1);
+							let json = json!({
+								"location": {
+									"ip": header.source_addr(),
+									"latitude": data.1,
+									"longitude": data.0,
+								}
+                    	    });
+                    	    println!("{}", json);
+                    		mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.html");
 							data
                     	}
                     	// If there was an error, send it to the logs.
