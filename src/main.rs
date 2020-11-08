@@ -14,6 +14,7 @@ use std::{
 	io::prelude::*,
 	thread,
 	fs,
+	path::Path,
 };
 
 mod locator;
@@ -21,8 +22,13 @@ mod locator;
 fn main() {
 
 	//remove temp files
-	fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove /tmp/ipmap.html");
-	fs::remove_file("/tmp/ipmap.data").expect("Couldn't remove /tmp/ipmap.data");
+	if Path::new("/tmp/ipmap.html").is_file() {
+	 	fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove /tmp/ipmap.html");
+	};
+
+	if Path::new("/tmp/ipmap.json").is_file() {
+		fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove /tmp/ipmap.json");
+	};
 
 	// Run page.html in another thread.
 	thread::spawn(|| {
@@ -34,7 +40,7 @@ fn main() {
 		open::that("/tmp/ipmap.html").expect("Couldn't open /tmp/ipmap.html");
     });
 
-	let mut mapdata = std::fs::File::create("/tmp/ipmap.data").expect("Couldn't create /tmp/ipmap.data");
+	let mut mapdata = std::fs::File::create("/tmp/ipmap.json").expect("Couldn't create /tmp/ipmap.json");
     let mut ip_index = HashSet::new();
 
 	// Set log settings
@@ -64,7 +70,7 @@ fn main() {
 								    }
                                 });
 								println!("{}", json);
-                    		    mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.data");
+                    		    mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.json");
                     	        }
                     	        // If there was an error, send it to the logs.
                     	        Err(error) => {
