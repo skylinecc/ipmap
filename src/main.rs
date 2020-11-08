@@ -50,31 +50,28 @@ fn main() {
             Err(value) => println!("IP error {:?}", value),
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
-					if !ip_index.contains(&format!("{}", header.source_addr())) {
-                        ip_index.insert(header.source_addr().to_string());
-                        if !header.source_addr().is_private() {
+					let cur_ip = header.source_addr();
+					if !ip_index.contains(&cur_ip.to_string()) && !cur_ip.is_private(){
+                        ip_index.insert(cur_ip.to_string());
                             // Run locator with the IP address, which returns Latitude and Longitude.
-                            match locator::Locator::get(format!("{}", header.source_addr())) {
+                            match locator::Locator::get(format!("{}", cur_ip)) {
                     	        Ok(data) => {
 							        let json = json!({
 								        "location": {
-									        "ip": header.source_addr(),
+									        "ip": cur_ip,
 									        "latitude": data.1,
 									        "longitude": data.0,
 								    }
                                 });
-
+								println!("{}", json);
                     		    mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.data");
-							    data
                     	        }
                     	        // If there was an error, send it to the logs.
                     	        Err(error) => {
-                    		        Log::error(&format!("{}", header.source_addr()));
+                    		        Log::error(&format!("{}", cur_ip));
                     	            Log::error(&format!("{}", error));
-                    		        (String::from("0.0"), String::from("0.0"))
                                 }
-                            };
-                        };
+                            }
                     }
                 }
                 Some(_) | None => (),
