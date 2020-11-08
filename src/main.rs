@@ -1,17 +1,18 @@
 extern crate etherparse;
 extern crate pcap;
 extern crate open;
+extern crate pnet;
 
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
 use casual_logger::{Level, Log, Opt};
+use serde_json::json;
+
 use std::include_bytes;
 use std::io::prelude::*;
 use std::thread;
 use std::fs;
 use std::path::Path;
-use serde_json::json;
-
 mod locator;
 
 fn main() {
@@ -35,21 +36,24 @@ fn main() {
 
 	let mut mapdata = std::fs::File::create("/tmp/ipmap.data").expect("Couldn't create /tmp/ipmap.data");
 
-	// Set log settings...
+	// Set log settings
 	Log::set_opt(Opt::Release);
 	Log::remove_old_logs();
 	Log::set_level(Level::Notice);
 
     let mut cap = Device::lookup().unwrap().open().unwrap();
 
-	// Loop for when it is getting packets. Ethan wrote it so I have no idea WTF is in here. Just ignore most of it because it works.
+	//loop through each packet in the capture interface as an iterator until it returns an error
     while let Ok(packet) = cap.next() {
         match SlicedPacket::from_ethernet(packet.data) {
-        	// If there is an error, print it. If there is not run stuff.
             Err(value) => println!("IP error {:?}", value),
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
-                	// Run locator with the IP address, which returns Latitude and Longitude.
+					// Run locator with the IP address, which returns Latitude and Longitude.
+					if header.source_addr().is_private() {
+						println!("{}", header.source_addr());
+						continue;
+					}
                     match locator::Locator::get(format!("{}", header.source_addr())) {
                     	Ok(data) => {
 							let json = json!({
@@ -59,7 +63,7 @@ fn main() {
 									"longitude": data.0,
 								}
                     	    });
-                    	    println!("{}", json);
+                    	  //  println!("{}", json);
                     		mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.html");
 							data
                     	}
