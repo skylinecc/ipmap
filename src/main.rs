@@ -2,27 +2,27 @@ extern crate etherparse;
 extern crate pcap;
 extern crate open;
 
-use std::collections::HashSet;
+
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
 use casual_logger::{Level, Log, Opt};
 use serde_json::json;
 
-use std::include_bytes;
-use std::io::prelude::*;
-use std::thread;
-use std::fs;
-use std::path::Path;
+use std::{
+	include_bytes,
+	collections::HashSet,
+	io::prelude::*,
+	thread,
+	fs,
+};
+
 mod locator;
 
 fn main() {
-	if Path::new("/tmp/ipmap.html").is_file() {
-	 	fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove /tmp/ipmap.html");
-	};
 
-	if Path::new("/tmp/ipmap.data").is_file() {
-		fs::remove_file("/tmp/ipmap.data").expect("Couldn't remove /tmp/ipmap.data");
-	};
+	//remove temp files
+	fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove /tmp/ipmap.html");
+	fs::remove_file("/tmp/ipmap.data").expect("Couldn't remove /tmp/ipmap.data");
 
 	// Run page.html in another thread.
 	thread::spawn(|| {
@@ -54,7 +54,7 @@ fn main() {
 					if !ip_index.contains(&cur_ip.to_string()) && !cur_ip.is_private(){
                         ip_index.insert(cur_ip.to_string());
                             // Run locator with the IP address, which returns Latitude and Longitude.
-                            match locator::Locator::get(format!("{}", cur_ip)) {
+                            match locator::Locator::get(cur_ip.to_string()) {
                     	        Ok(data) => {
 							        let json = json!({
 								        "location": {
@@ -68,8 +68,8 @@ fn main() {
                     	        }
                     	        // If there was an error, send it to the logs.
                     	        Err(error) => {
-                    		        Log::error(&format!("{}", cur_ip));
-                    	            Log::error(&format!("{}", error));
+                    		        Log::error(&cur_ip.to_string());
+                    	            Log::error(&error);
                                 }
                             }
                     }
