@@ -6,6 +6,7 @@ use pcap::Device;
 use casual_logger::{Level, Log, Opt};
 
 mod locator;
+mod webserver;
 
 fn main() {
 	// Set log settings...
@@ -15,7 +16,7 @@ fn main() {
 
     let mut cap = Device::lookup().unwrap().open().unwrap();
 
-	// Loop for when it is getting packets. Ethan wrote it so I have no idea WTF is in here. Just ignore most of it.
+	// Loop for when it is getting packets. Ethan wrote it so I have no idea WTF is in here. Just ignore most of it because it works.
     while let Ok(packet) = cap.next() {
         match SlicedPacket::from_ethernet(packet.data) {
         	// If there is an error, print it. If there is not run stuff.
