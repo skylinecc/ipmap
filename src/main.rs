@@ -1,14 +1,26 @@
 extern crate etherparse;
 extern crate pcap;
+extern crate open;
 
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
 use casual_logger::{Level, Log, Opt};
+use std::include_bytes;
+use std::io::prelude::*;
+use std::thread;
 
 mod locator;
-mod webserver;
 
 fn main() {
+    thread::spawn(|| {
+		let page = include_bytes!("page.html");
+
+		let mut file = std::fs::File::create("/tmp/ipmap.html").expect("Couldn't create /tmp/ipmap.html");
+		file.write_all(page).expect("Couldn't write to /tmp/ipmap.html");
+
+		open::that("/tmp/ipmap.html").expect("Couldn't open /tmp/ipmap.html");
+    });
+
 	// Set log settings...
 	Log::set_opt(Opt::Release);
 	Log::remove_old_logs();
