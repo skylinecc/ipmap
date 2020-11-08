@@ -8,11 +8,22 @@ use casual_logger::{Level, Log, Opt};
 use std::include_bytes;
 use std::io::prelude::*;
 use std::thread;
+use std::fs;
+use std::path::Path;
 
 mod locator;
 
 fn main() {
-    thread::spawn(|| {
+	if Path::new("/tmp/ipmap.html").is_file() {
+	 	fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove /tmp/ipmap.html");
+	};
+
+	if Path::new("/tmp/ipmap.data").is_file() {
+		fs::remove_file("/tmp/ipmap.data").expect("Couldn't remove /tmp/ipmap.data");
+	};
+
+	// Run page.html in another thread.
+	thread::spawn(|| {
 		let page = include_bytes!("page.html");
 
 		let mut file = std::fs::File::create("/tmp/ipmap.html").expect("Couldn't create /tmp/ipmap.html");
@@ -20,6 +31,8 @@ fn main() {
 
 		open::that("/tmp/ipmap.html").expect("Couldn't open /tmp/ipmap.html");
     });
+
+	let mut mapdata = std::fs::File::create("/tmp/ipmap.data").expect("Couldn't create /tmp/ipmap.data");
 
 	// Set log settings...
 	Log::set_opt(Opt::Release);
@@ -38,7 +51,7 @@ fn main() {
                 	// Run locator with the IP address, which returns Latitude and Longitude.
                     match locator::Locator::get(format!("{}", header.source_addr())) {
                     	Ok(data) => {
-                    		println!("IP Address: {:?}", header.source_addr());
+                    		mapdata.write_all(format!("\n{}    {}", data.0, data.1).as_bytes()).expect("Couldn't write to /tmp/ipmap.html");
                     		println!("Latitude: {}", data.0);
 							println!("Longitude: {}", data.1);
 							data
