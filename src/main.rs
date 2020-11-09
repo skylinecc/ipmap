@@ -71,22 +71,22 @@ fn main() {
                         // Run locator with the IP address, which returns Latitude and Longitude.
                         match locator::Locator::get(cur_ip.to_string()) {
                             Ok(data) => {
-                                if !latitude_index.contains(&data.1) {
-                                    if !longitude_index.contains(&data.0) {
+                                if !latitude_index.contains(&data.longitude) {
+                                    if !longitude_index.contains(&data.longitude) {
                                         let json = json!({
                                             "location": {
                                                 "ip": cur_ip,
-                                                "latitude": data.1,
-                                                "longitude": data.0,
+                                                "latitude": data.latitude,
+                                                "longitude": data.longitude,
                                             }
                                         });
-                                        longitude_index.insert(data.0);
+                                        longitude_index.insert(data.longitude);
                                         println!("{}", json);
                                         mapdata
                                             .write_all(format!("\n{}", json).as_bytes())
                                             .expect("Couldn't write to /tmp/ipmap.json");
                                     }
-                                    latitude_index.insert(data.1);
+                                    latitude_index.insert(data.latitude);
                                 }
                             }
                             // If there was an error, send it to the logs.

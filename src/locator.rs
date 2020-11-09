@@ -1,9 +1,15 @@
 use serde_json::Value;
 use ureq::get;
-pub struct Locator {}
+use std::rc::Rc;
+
+pub struct Locator {
+    pub ip: String,
+    pub latitude: String,
+    pub longitude: String,
+}
 
 impl Locator {
-    pub fn get(ip: String) -> std::result::Result<(String, String), String> {
+    pub fn get(ip: String) -> std::result::Result<Rc<Self>, String> {
         let url = format!("http://ipwhois.app/json/{}", ip);
 
         let response = get(&url).call();
@@ -29,22 +35,29 @@ impl Locator {
         };
 
         // Get latitude from parsed_json
-        let latitude = match &parsed_json["latitude"] {
-            Value::String(latitude) => latitude,
+        let latitude_str = match &parsed_json["latitude"] {
+            Value::String(latitude_str) => latitude_str,
             _ => {
                 return Err("Unable to find latitude in parsed JSON".to_string());
             }
         };
 
         // Get longitude from parsed_json
-        let longitude = match &parsed_json["longitude"] {
-            Value::String(longitude) => longitude,
+        let longitude_str = match &parsed_json["longitude"] {
+            Value::String(longitude_str) => longitude_str,
             _ => {
                 return Err("Unable to find longitude in parsed JSON".to_string());
             }
         };
 
-        let result = (longitude.clone(), latitude.clone());
+        let latitude = latitude_str.to_string();
+        let longitude = longitude_str.to_string();
+
+        let result = Rc::new(Locator {
+            ip,
+            latitude,
+            longitude,
+        });
 
         Ok(result)
     }
