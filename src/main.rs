@@ -25,11 +25,11 @@ fn main() {
 
     //remove temporary files
     if Path::new("/tmp/ipmap.html").is_file() {
-        fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove /tmp/ipmap.html");
+        fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove ipmap.html");
     };
 
     if Path::new("/tmp/ipmap.json").is_file() {
-        fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove /tmp/ipmap.json");
+        fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove sipmap.json");
     };
 
     // Run page.html in another thread IF the headless option is not used.
@@ -38,11 +38,11 @@ fn main() {
             let page = include_bytes!("page.html");
 
             let mut file =
-                std::fs::File::create("/tmp/ipmap.html").expect("Couldn't create /tmp/ipmap.html");
+                std::fs::File::create("/tmp/ipmap.html").expect("Couldn't create ipmap.html");
             file.write_all(page)
-                .expect("Couldn't write to /tmp/ipmap.html");
+                .expect("Couldn't write to ipmap.html");
 
-            open::that("/tmp/ipmap.html").expect("Couldn't open /tmp/ipmap.html");
+            open::that("/tmp/ipmap.html").expect("Couldn't open ipmap.html");
         });
     }
 
