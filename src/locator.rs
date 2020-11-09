@@ -1,6 +1,5 @@
 use serde_json::Value;
 use ureq::get;
-use std::rc::Rc;
 
 pub struct Locator {
     pub ip: String,
@@ -9,7 +8,7 @@ pub struct Locator {
 }
 
 impl Locator {
-    pub fn get(ip: String) -> std::result::Result<Rc<Self>, String> {
+    pub fn get(ip: String) -> std::result::Result<Self, String> {
         let url = format!("http://ipwhois.app/json/{}", ip);
 
         let response = get(&url).call();
@@ -53,11 +52,11 @@ impl Locator {
         let latitude = latitude_str.to_string();
         let longitude = longitude_str.to_string();
 
-        let result = Rc::new(Locator {
+        let result = Locator {
             ip,
             latitude,
             longitude,
-        });
+        };
 
         Ok(result)
     }

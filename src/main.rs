@@ -75,7 +75,7 @@ fn main() {
                                     if !longitude_index.contains(&data.longitude) {
                                         let json = json!({
                                             "location": {
-                                                "ip": cur_ip,
+                                                "ip": data.ip,
                                                 "latitude": data.latitude,
                                                 "longitude": data.longitude,
                                             }
