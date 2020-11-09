@@ -8,17 +8,17 @@ ipmap uses `libpcap`, which is only available on UNIX-like systems (macOS, Linux
 ## Building
 Because this program is written in rust, you must have cargo [installed](https://www.rust-lang.org/tools/install).
 
-First, build it.
+First, build it:
 ```
 $ cargo build --release
 ```
 
-You must have privileges to capture using the pcap API. In order to give the binary the necessary permissions, run (for Linux):
+You must have privileges to capture using the pcap API. In order to give the binary the necessary permissions, run:
 ```
 # setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
 ```
 
-Finally, Execute it.
+Finally, execute it.
 ```
 # target/release/ipmap
 ```
