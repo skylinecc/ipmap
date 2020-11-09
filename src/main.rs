@@ -1,5 +1,4 @@
 extern crate etherparse;
-extern crate open;
 extern crate pcap;
 
 use casual_logger::{Level, Log, Opt};
@@ -17,14 +16,14 @@ fn main() {
         .author("Created by the Skyline High School Coding Club")
         .arg(
             Arg::with_name("headless")
-                .long("no-browser")
+                .long("headless")
                 .help("Launches the program without opening the browser")
                 .required(false)
                 .takes_value(false),
         )
         .get_matches();
 
-    //remove temp files
+    //remove temporary files
     if Path::new("/tmp/ipmap.html").is_file() {
         fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove /tmp/ipmap.html");
     };
@@ -60,7 +59,7 @@ fn main() {
 
     let mut cap = Device::lookup().unwrap().open().unwrap();
 
-    //loop through each packet in the capture interface as an iterator until it returns an error
+    // Loop through each packet in the capture interface as an iterator until it returns an error.
     while let Ok(packet) = cap.next() {
         match SlicedPacket::from_ethernet(packet.data) {
             Err(error) => Log::error(&error.to_string()),
