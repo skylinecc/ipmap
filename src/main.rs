@@ -10,6 +10,8 @@ use std::{collections::HashSet, fs, include_bytes, io::prelude::*, path::Path, t
 
 mod locator;
 
+const INDEX_HTML: &'static [u8] = include_bytes!("page.html");
+
 fn main() {
     let app = App::new("IPmap")
         .version("0.1.0")
@@ -35,11 +37,9 @@ fn main() {
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
         thread::spawn(|| {
-            let page = include_bytes!("page.html");
-
             let mut file =
                 std::fs::File::create("/tmp/ipmap.html").expect("Couldn't create ipmap.html");
-            file.write_all(page)
+            file.write_all(INDEX_HTML)
                 .expect("Couldn't write to ipmap.html");
 
             open::that("/tmp/ipmap.html").expect("Couldn't open ipmap.html");
