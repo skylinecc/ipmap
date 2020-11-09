@@ -13,7 +13,7 @@ mod locator;
 fn main() {
     let app = App::new("IPmap")
         .version("0.1.0")
-        .author("Created by the Skyline High School Coding Club")
+        .author("Skyline High School Coding Club <skylinecc@gmail.com")
         .arg(
             Arg::with_name("headless")
                 .long("headless")
@@ -32,7 +32,7 @@ fn main() {
         fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove /tmp/ipmap.json");
     };
 
-    // Run page.html in another thread IF the headless option is not run.
+    // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
         thread::spawn(|| {
             let page = include_bytes!("page.html");
