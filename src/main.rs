@@ -55,7 +55,7 @@ fn main() {
 	//loop through each packet in the capture interface as an iterator until it returns an error
     while let Ok(packet) = cap.next() {
         match SlicedPacket::from_ethernet(packet.data) {
-            Err(value) => println!("IP error {:?}", value),
+            Err(error) => Log::error(&error.to_string()),
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
 					let cur_ip = header.source_addr();
