@@ -42,6 +42,8 @@ fn main() {
 
 	let mut mapdata = std::fs::File::create("/tmp/ipmap.json").expect("Couldn't create /tmp/ipmap.json");
     let mut ip_index = HashSet::new();
+    let mut latitude_index = HashSet::new();
+    let mut longitude_index = HashSet::new();
 
 	// Set log settings
 	Log::set_opt(Opt::Release);
@@ -62,15 +64,21 @@ fn main() {
                             // Run locator with the IP address, which returns Latitude and Longitude.
                             match locator::Locator::get(cur_ip.to_string()) {
                     	        Ok(data) => {
-							        let json = json!({
-								        "location": {
-									        "ip": cur_ip,
-									        "latitude": data.1,
-									        "longitude": data.0,
-								    }
-                                });
-								println!("{}", json);
-                    		    mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.json");
+                    	            if !latitude_index.contains(&data.1) {
+                    	                if !longitude_index.contains(&data.0) {
+							                let json = json!({
+								                "location": {
+								                    "ip": cur_ip,
+								                    "latitude": data.1,
+								                    "longitude": data.0,
+								                }
+                                            });
+                                            longitude_index.insert(data.0);
+                                            println!("{}", json);
+                    		                mapdata.write_all(format!("\n{}", json).as_bytes()).expect("Couldn't write to /tmp/ipmap.json");
+                                        }
+                                        latitude_index.insert(data.1);
+                                    }
                     	        }
                     	        // If there was an error, send it to the logs.
                     	        Err(error) => {
