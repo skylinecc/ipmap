@@ -25,15 +25,19 @@ fn main() {
         )
         .get_matches();
 
-    let html_path = &get_html_path();
+    let path = get_path();
+
+    let html_path = path.clone() + "ipmap.html";
+    let json_path = path.clone() + "ipmap.json";
+    let html_path_clone = html_path.clone();
 
     //remove temporary files
-    if Path::new(html_path).is_file() {
-        fs::remove_file(html_path).expect("Couldn't remove ipmap.html");
+    if Path::new(&html_path.clone()).is_file() {
+        fs::remove_file(&html_path).expect("Couldn't remove ipmap.html");
     };
 
-    if Path::new("/tmp/ipmap.json").is_file() {
-        fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove ipmap.json");
+    if Path::new(&json_path).is_file() {
+        fs::remove_file(&json_path).expect("Couldn't remove ipmap.json");
     };
 
     // Run page.html in another thread IF the headless option is not used.
@@ -43,7 +47,7 @@ fn main() {
         file.write_all(INDEX_HTML)
             .expect("Couldn't write to ipmap.html");
 
-        open::that_in_background(html_path);
+        open::that_in_background(&html_path_clone);
     }
 
     let mut mapdata =
@@ -80,11 +84,11 @@ fn main() {
                                                 "longitude": ip.longitude,
                                             }
                                         });
-                                        longitude_index.insert(ip.longitude);
                                         println!("{} - {}", ip.ip, ip.city);
                                         mapdata
                                             .write_all(format!("\n{}", json).as_bytes())
                                             .expect("Couldn't write to /tmp/ipmap.json");
+                                        longitude_index.insert(ip.longitude);
                                     }
                                     latitude_index.insert(ip.latitude);
                                 }
@@ -103,10 +107,10 @@ fn main() {
     }
 }
 
-fn get_html_path() -> String {
+fn get_path() -> String {
     if std::env::consts::OS == "windows" {
-        return "%userprofile%\\AppData\\Local\\Temp\\ipmap.html".to_string();
+        return "%userprofile%\\AppData\\Local\\Temp\\".to_string();
     } else {
-        return "/tmp/ipmap.html".to_string();
+        return "/tmp/".to_string();
     }
 }
