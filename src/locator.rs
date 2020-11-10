@@ -5,6 +5,7 @@ pub struct Locator {
     pub ip: String,
     pub latitude: String,
     pub longitude: String,
+    pub city: String,
 }
 
 impl Locator {
@@ -49,13 +50,22 @@ impl Locator {
             }
         };
 
+        let city_str = match &parsed_json["city"] {
+            Value::String(city_str) => city_str,
+            _ => {
+                return Err("Unable to find city in parsed JSON".to_string());
+            }
+        };
+
         let latitude = latitude_str.to_string();
         let longitude = longitude_str.to_string();
+        let city = city_str.to_string();
 
         let result = Locator {
             ip,
             latitude,
             longitude,
+            city,
         };
 
         Ok(result)

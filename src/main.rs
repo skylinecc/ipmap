@@ -31,7 +31,7 @@ fn main() {
     };
 
     if Path::new("/tmp/ipmap.json").is_file() {
-        fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove sipmap.json");
+        fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove ipmap.json");
     };
 
     // Run page.html in another thread IF the headless option is not used.
@@ -70,23 +70,23 @@ fn main() {
                         ip_index.insert(cur_ip.to_string());
                         // Run locator with the IP address, which returns Latitude and Longitude.
                         match locator::Locator::get(cur_ip.to_string()) {
-                            Ok(data) => {
-                                if !latitude_index.contains(&data.longitude) {
-                                    if !longitude_index.contains(&data.longitude) {
+                            Ok(ip) => {
+                                if !latitude_index.contains(&ip.longitude) {
+                                    if !longitude_index.contains(&ip.longitude) {
                                         let json = json!({
                                             "location": {
-                                                "ip": data.ip,
-                                                "latitude": data.latitude,
-                                                "longitude": data.longitude,
+                                                "ip": ip.ip,
+                                                "latitude": ip.latitude,
+                                                "longitude": ip.longitude,
                                             }
                                         });
-                                        longitude_index.insert(data.longitude);
-                                        println!("{}", json);
+                                        longitude_index.insert(ip.longitude);
+                                        println!("{} -> {}", json, ip.city);
                                         mapdata
                                             .write_all(format!("\n{}", json).as_bytes())
                                             .expect("Couldn't write to /tmp/ipmap.json");
                                     }
-                                    latitude_index.insert(data.latitude);
+                                    latitude_index.insert(ip.latitude);
                                 }
                             }
                             // If there was an error, send it to the logs.
