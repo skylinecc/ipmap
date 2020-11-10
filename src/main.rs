@@ -13,9 +13,9 @@ mod locator;
 const INDEX_HTML: &'static [u8] = include_bytes!("page.html");
 
 fn main() {
-    let app = App::new("IPmap")
+    let app = App::new("ipmap")
         .version("0.1.0")
-        .author("Skyline High School Coding Club <skylinecc@gmail.com")
+        .author("Skyline High School Coding Club Authors <skylinecc@gmail.com")
         .arg(
             Arg::with_name("headless")
                 .long("headless")
@@ -81,7 +81,7 @@ fn main() {
                                             }
                                         });
                                         longitude_index.insert(ip.longitude);
-                                        println!("{} ({})", json, ip.city);
+                                        println!("{} ({})", ip.ip, ip.city);
                                         mapdata
                                             .write_all(format!("\n{}", json).as_bytes())
                                             .expect("Couldn't write to /tmp/ipmap.json");
