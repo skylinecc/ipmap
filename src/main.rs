@@ -65,11 +65,11 @@ fn main() {
             Err(error) => Log::error(&error.to_string()),
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
-                    let cur_ip = header.source_addr();
-                    if !ip_index.contains(&cur_ip.to_string()) && !cur_ip.is_private() {
-                        ip_index.insert(cur_ip.to_string());
+                    let current_ip = header.source_addr();
+                    if !ip_index.contains(&current_ip.to_string()) && !current_ip.is_private() {
+                        ip_index.insert(current_ip.to_string());
                         // Run locator with the IP address, which returns Latitude and Longitude.
-                        match locator::Locator::get(cur_ip.to_string()) {
+                        match locator::Locator::get(current_ip.to_string()) {
                             Ok(ip) => {
                                 if !latitude_index.contains(&ip.longitude) {
                                     if !longitude_index.contains(&ip.longitude) {
@@ -81,7 +81,7 @@ fn main() {
                                             }
                                         });
                                         longitude_index.insert(ip.longitude);
-                                        println!("{} -> {}", json, ip.city);
+                                        println!("{} ({})", json, ip.city);
                                         mapdata
                                             .write_all(format!("\n{}", json).as_bytes())
                                             .expect("Couldn't write to /tmp/ipmap.json");
@@ -91,7 +91,7 @@ fn main() {
                             }
                             // If there was an error, send it to the logs.
                             Err(error) => {
-                                Log::error(&cur_ip.to_string());
+                                Log::error(&current_ip.to_string());
                                 Log::error(&error);
                             }
                         }
