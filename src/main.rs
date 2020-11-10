@@ -4,10 +4,9 @@ extern crate pcap;
 use casual_logger::{Level, Log, Opt};
 use clap::{App, Arg};
 use etherparse::{InternetSlice, SlicedPacket};
-use open::that_in_background;
 use pcap::Device;
 use serde_json::json;
-use std::{collections::HashSet, fs, include_bytes, io::prelude::*, path::Path, thread};
+use std::{collections::HashSet, fs, include_bytes, io::prelude::*, path::Path};
 
 mod locator;
 
@@ -26,9 +25,11 @@ fn main() {
         )
         .get_matches();
 
+    let html_path = &get_html_path();
+
     //remove temporary files
-    if Path::new("/tmp/ipmap.html").is_file() {
-        fs::remove_file("/tmp/ipmap.html").expect("Couldn't remove ipmap.html");
+    if Path::new(html_path).is_file() {
+        fs::remove_file(html_path).expect("Couldn't remove ipmap.html");
     };
 
     if Path::new("/tmp/ipmap.json").is_file() {
@@ -38,11 +39,11 @@ fn main() {
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
         let mut file =
-            std::fs::File::create("/tmp/ipmap.html").expect("Couldn't create ipmap.html");
+            std::fs::File::create(html_path).expect("Couldn't create ipmap.html");
         file.write_all(INDEX_HTML)
             .expect("Couldn't write to ipmap.html");
 
-        open::that_in_background("/tmp/ipmap.html");
+        open::that_in_background(html_path);
     }
 
     let mut mapdata =
@@ -99,5 +100,13 @@ fn main() {
                 Some(_) | None => (),
             },
         }
+    }
+}
+
+fn get_html_path() -> String {
+    if std::env::consts::OS == "windows" {
+        return "%userprofile%\\AppData\\Local\\Temp\\ipmap.html".to_string();
+    } else {
+        return "/tmp/ipmap.html".to_string();
     }
 }
