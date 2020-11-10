@@ -4,6 +4,7 @@ extern crate pcap;
 use casual_logger::{Level, Log, Opt};
 use clap::{App, Arg};
 use etherparse::{InternetSlice, SlicedPacket};
+use open::that_in_background;
 use pcap::Device;
 use serde_json::json;
 use std::{collections::HashSet, fs, include_bytes, io::prelude::*, path::Path, thread};
@@ -36,14 +37,12 @@ fn main() {
 
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
-        thread::spawn(|| {
-            let mut file =
-                std::fs::File::create("/tmp/ipmap.html").expect("Couldn't create ipmap.html");
-            file.write_all(INDEX_HTML)
-                .expect("Couldn't write to ipmap.html");
+        let mut file =
+            std::fs::File::create("/tmp/ipmap.html").expect("Couldn't create ipmap.html");
+        file.write_all(INDEX_HTML)
+            .expect("Couldn't write to ipmap.html");
 
-            open::that("/tmp/ipmap.html").expect("Couldn't open ipmap.html");
-        });
+        open::that_in_background("/tmp/ipmap.html");
     }
 
     let mut mapdata =
@@ -81,7 +80,7 @@ fn main() {
                                             }
                                         });
                                         longitude_index.insert(ip.longitude);
-                                        println!("{} ({})", ip.ip, ip.city);
+                                        println!("{} - {}", ip.ip, ip.city);
                                         mapdata
                                             .write_all(format!("\n{}", json).as_bytes())
                                             .expect("Couldn't write to /tmp/ipmap.json");
