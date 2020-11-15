@@ -15,7 +15,7 @@ impl Locator {
         let response = get(&url).call();
 
         if !response.ok() {
-            eprintln!("Cannot connect to ipwhois.app");
+            return Err(format!("Couldn't connect to ipwhois.app"));
         };
 
         // Turn the data into a string.
