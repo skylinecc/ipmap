@@ -6,10 +6,11 @@ use clap::{App, Arg};
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
 use serde_json::json;
-use std::{collections::HashSet, fs, include_bytes, io::prelude::*, path::Path, thread};
+use std::{collections::HashSet, fs, include_bytes, io::prelude::*, path::Path};
 
-mod web;
 mod locator;
+
+const INDEX_HTML: &'static [u8] = include_bytes!("index.html");
 
 fn main() {
     let app = App::new("ipmap")
@@ -20,21 +21,29 @@ fn main() {
                 .long("headless")
                 .help("Launches the program without opening the browser")
                 .required(false)
-                .takes_value(false)
-        )
-        .arg(
-            Arg::with_name("PORT")
-            .help("What port to run the webserver on")
-            .required(true)
-            .index(1)
+                .takes_value(false),
         )
         .get_matches();
 
-    if app.is_present("headless") {
-        thread::spawn(|| {
-            let port = app.value_of("PORT").unwrap_or("8040");
-            web::start_web_server(port);
-        });
+    let html_path = &get_html_path();
+
+    //remove temporary files
+    if Path::new(html_path).is_file() {
+        fs::remove_file(html_path).expect("Couldn't remove ipmap.html");
+    };
+
+    if Path::new("/tmp/ipmap.json").is_file() {
+        fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove ipmap.json");
+    };
+
+    // Run page.html in another thread IF the headless option is not used.
+    if !app.is_present("headless") {
+        let mut file =
+            std::fs::File::create(html_path).expect("Couldn't create ipmap.html");
+        file.write_all(INDEX_HTML)
+            .expect("Couldn't write to ipmap.html");
+
+        open::that_in_background(html_path);
     }
 
     let mut mapdata =
@@ -71,11 +80,11 @@ fn main() {
                                                 "longitude": ip.longitude,
                                             }
                                         });
-                                        println!("{} ({})", ip.ip, ip.city);
+                                        longitude_index.insert(ip.longitude);
+                                        println!("{} - {}", ip.ip, ip.city);
                                         mapdata
                                             .write_all(format!("\n{}", json).as_bytes())
                                             .expect("Couldn't write to /tmp/ipmap.json");
-                                        longitude_index.insert(ip.longitude);
                                     }
                                     latitude_index.insert(ip.latitude);
                                 }
@@ -91,5 +100,13 @@ fn main() {
                 Some(_) | None => (),
             },
         }
+    }
+}
+
+fn get_html_path() -> String {
+    if std::env::consts::OS == "windows" {
+        return "%userprofile%\\AppData\\Local\\Temp\\ipmap.html".to_string();
+    } else {
+        return "/tmp/ipmap.html".to_string();
     }
 }
