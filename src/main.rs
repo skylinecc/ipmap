@@ -43,7 +43,9 @@ fn main() {
 
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
-        rocket();
+        let web_thread = thread::spawn(|| {
+            rocket();
+        });
 
         let mut file =
             std::fs::File::create(&format!("{}ipmap.html", path)).expect(&format!("Couldn't create {}ipmap.html", path));
@@ -123,10 +125,10 @@ fn get_path() -> String {
 
 fn rocket() {
     println!("running the webserver part");
-    rocket::ignite().mount("/", routes![hello]).launch();
+    rocket::ignite().mount("/", routes![index]).launch();
 }
 
 #[get("/")]
-fn hello() -> &'static str {
+fn index() -> &'static str {
     INDEX_STRING
 }
