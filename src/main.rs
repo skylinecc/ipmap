@@ -13,6 +13,7 @@ mod locator;
 const INDEX_HTML: &'static [u8] = include_bytes!("index.html");
 
 fn main() {
+    // Set application details
     let app = App::new("ipmap")
         .version("0.1.0")
         .author("Skyline High School Coding Club Authors <skylinecc@gmail.com")
@@ -25,29 +26,29 @@ fn main() {
         )
         .get_matches();
 
-    let html_path = &get_html_path();
+    let path = &get_path();
 
-    //remove temporary files
-    if Path::new(html_path).is_file() {
-        fs::remove_file(html_path).expect("Couldn't remove ipmap.html");
+    // Remove temporary files
+    if Path::new(&format!("{}ipmap.html", path)).is_file() {
+        fs::remove_file(&format!("{}ipmap.html", path)).expect(&format!("Couldn't create {}ipmap.html", path));
     };
 
-    if Path::new("/tmp/ipmap.json").is_file() {
-        fs::remove_file("/tmp/ipmap.json").expect("Couldn't remove ipmap.json");
+    if Path::new(&format!("{}ipmap.json", path)).is_file() {
+        fs::remove_file(&format!("{}ipmap.json", path)).expect(&format!("Couldn't create {}ipmap.json", path));
     };
 
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
         let mut file =
-            std::fs::File::create(html_path).expect("Couldn't create ipmap.html");
+            std::fs::File::create(&format!("{}ipmap.html", path)).expect(&format!("Couldn't create {}ipmap.html", path));
         file.write_all(INDEX_HTML)
             .expect("Couldn't write to ipmap.html");
 
-        open::that_in_background(html_path);
+        open::that_in_background(&format!("{}ipmap.html", path));
     }
 
     let mut mapdata =
-        std::fs::File::create("/tmp/ipmap.json").expect("Couldn't create /tmp/ipmap.json");
+        std::fs::File::create(&format!("{}ipmap.json", path)).expect(&format!("Couldn't create {}ipmap.json", path));
     let mut ip_index = HashSet::new();
     let mut latitude_index = HashSet::new();
     let mut longitude_index = HashSet::new();
@@ -103,10 +104,11 @@ fn main() {
     }
 }
 
-fn get_html_path() -> String {
+// Set path for temporary file based on the operating system
+fn get_path() -> String {
     if std::env::consts::OS == "windows" {
-        return "%userprofile%\\AppData\\Local\\Temp\\ipmap.html".to_string();
+        return "%userprofile%\\AppData\\Local\\Temp\\".to_string();
     } else {
-        return "/tmp/ipmap.html".to_string();
+        return "/tmp/".to_string();
     }
 }
