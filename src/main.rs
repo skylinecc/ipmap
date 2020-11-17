@@ -1,16 +1,20 @@
+#![feature(proc_macro_hygiene, decl_macro)]
+
 extern crate etherparse;
 extern crate pcap;
+#[macro_use] extern crate rocket;
 
 use casual_logger::{Level, Log, Opt};
 use clap::{App, Arg};
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
 use serde_json::json;
-use std::{collections::HashSet, fs, include_bytes, io::prelude::*, path::Path};
+use std::{collections::HashSet, fs, io::prelude::*, path::Path, thread};
 
 mod locator;
 
-const INDEX_HTML: &'static [u8] = include_bytes!("index.html");
+const INDEX_BYTES: &'static [u8] = include_bytes!("index.html");
+const INDEX_STRING: &'static str = include_str!("index.html");
 
 fn main() {
     // Set application details
@@ -39,13 +43,17 @@ fn main() {
 
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
+        rocket();
+
         let mut file =
             std::fs::File::create(&format!("{}ipmap.html", path)).expect(&format!("Couldn't create {}ipmap.html", path));
-        file.write_all(INDEX_HTML)
+        file.write_all(INDEX_BYTES)
             .expect("Couldn't write to ipmap.html");
 
         open::that_in_background(&format!("{}ipmap.html", path));
     }
+
+    println!("running the IP detection part");
 
     let mut mapdata =
         std::fs::File::create(&format!("{}ipmap.json", path)).expect(&format!("Couldn't create {}ipmap.json", path));
@@ -111,4 +119,14 @@ fn get_path() -> String {
     } else {
         return "/tmp/".to_string();
     }
+}
+
+fn rocket() {
+    println!("running the webserver part");
+    rocket::ignite().mount("/", routes![hello]).launch();
+}
+
+#[get("/")]
+fn hello() -> &'static str {
+    INDEX_STRING
 }
