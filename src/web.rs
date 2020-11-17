@@ -1,11 +1,13 @@
+use rocket::response::content;
+
 pub fn rocket() {
     println!("Running Webserver");
     rocket::ignite().mount("/", routes![index, json]).launch();
 }
 
 #[get("/")]
-fn index() -> &'static str {
-    include_str!("index.html")
+fn index() -> content::Html<String> {
+    content::Html(format!("{}", include_str!("index.html")))
 }
 
 #[get("/json")]

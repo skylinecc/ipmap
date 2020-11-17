@@ -6,13 +6,11 @@ extern crate pcap;
 
 use casual_logger::{Level, Log, Opt};
 use clap::{App, Arg};
-use std::{fs, io::prelude::*, path::Path, thread};
+use std::thread;
 
 mod locator;
 mod web;
 mod ip;
-
-const INDEX_BYTES: &'static [u8] = include_bytes!("index.html");
 
 fn main() {
     // Set application details
@@ -34,29 +32,12 @@ fn main() {
     Log::remove_old_logs();
     Log::set_level(Level::Notice);
 
-    let path = &ip::get_path();
-
-    // Remove temporary files
-    if Path::new(&format!("{}ipmap.html", path)).is_file() {
-        fs::remove_file(&format!("{}ipmap.html", path)).expect(&format!("Couldn't create {}ipmap.html", path));
-    };
-
-    if Path::new(&format!("{}ipmap.json", path)).is_file() {
-        fs::remove_file(&format!("{}ipmap.json", path)).expect(&format!("Couldn't create {}ipmap.json", path));
-    };
-
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
         thread::spawn(|| {
             web::rocket();
         });
-
-        let mut file =
-            std::fs::File::create(&format!("{}ipmap.html", path)).expect(&format!("Couldn't create {}ipmap.html", path));
-        file.write_all(INDEX_BYTES)
-            .expect("Couldn't write to ipmap.html");
-
-        open::that_in_background(&format!("{}ipmap.html", path));
+        open::that_in_background("localhost:8000");
     };
 
     ip::ipextract();

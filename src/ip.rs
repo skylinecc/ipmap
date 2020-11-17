@@ -5,7 +5,6 @@ use std::{collections::HashSet, io::prelude::*};
 use casual_logger::Log;
 use crate::locator::Locator;
 
-
 pub fn ipextract() {
     println!("Running IP Detection");
 
@@ -43,7 +42,7 @@ pub fn ipextract() {
                                         println!("{} - {}", ip.ip, ip.city);
                                         mapdata
                                             .write_all(format!("\n{}", json).as_bytes())
-                                            .expect("Couldn't write to /tmp/ipmap.json");
+                                            .expect(&format!("Couldn't write to {}ipmap.json", path));
 
                                         longitude_index.insert(ip.longitude);
                                     }
