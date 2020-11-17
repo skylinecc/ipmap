@@ -6,15 +6,13 @@ extern crate pcap;
 
 use casual_logger::{Level, Log, Opt};
 use clap::{App, Arg};
-use etherparse::{InternetSlice, SlicedPacket};
-use pcap::Device;
-use serde_json::json;
-use std::{collections::HashSet, fs, io::prelude::*, path::Path, thread};
+use std::{fs, io::prelude::*, path::Path, thread};
 
 mod locator;
+mod web;
+mod ip;
 
 const INDEX_BYTES: &'static [u8] = include_bytes!("index.html");
-const INDEX_STRING: &'static str = include_str!("index.html");
 
 fn main() {
     // Set application details
@@ -30,7 +28,13 @@ fn main() {
         )
         .get_matches();
 
-    let path = &get_path();
+
+    // Set log settings
+    Log::set_opt(Opt::Release);
+    Log::remove_old_logs();
+    Log::set_level(Level::Notice);
+
+    let path = &ip::get_path();
 
     // Remove temporary files
     if Path::new(&format!("{}ipmap.html", path)).is_file() {
@@ -43,8 +47,8 @@ fn main() {
 
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
-        let web_thread = thread::spawn(|| {
-            rocket();
+        thread::spawn(|| {
+            web::rocket();
         });
 
         let mut file =
@@ -53,82 +57,7 @@ fn main() {
             .expect("Couldn't write to ipmap.html");
 
         open::that_in_background(&format!("{}ipmap.html", path));
-    }
+    };
 
-    println!("running the IP detection part");
-
-    let mut mapdata =
-        std::fs::File::create(&format!("{}ipmap.json", path)).expect(&format!("Couldn't create {}ipmap.json", path));
-    let mut ip_index = HashSet::new();
-    let mut latitude_index = HashSet::new();
-    let mut longitude_index = HashSet::new();
-
-    // Set log settings
-    Log::set_opt(Opt::Release);
-    Log::remove_old_logs();
-    Log::set_level(Level::Notice);
-
-    let mut cap = Device::lookup().unwrap().open().unwrap();
-
-    // Loop through each packet in the capture interface as an iterator until it returns an error.
-    while let Ok(packet) = cap.next() {
-        match SlicedPacket::from_ethernet(packet.data) {
-            Err(error) => Log::error(&error.to_string()),
-            Ok(value) => match value.ip {
-                Some(InternetSlice::Ipv4(header)) => {
-                    let current_ip = header.source_addr();
-                    if !ip_index.contains(&current_ip.to_string()) && !current_ip.is_private() {
-                        ip_index.insert(current_ip.to_string());
-                        // Run locator with the IP address, which returns Latitude and Longitude.
-                        match locator::Locator::get(current_ip.to_string()) {
-                            Ok(ip) => {
-                                if !latitude_index.contains(&ip.longitude) {
-                                    if !longitude_index.contains(&ip.longitude) {
-                                        let json = json!({
-                                            "location": {
-                                                "ip": ip.ip,
-                                                "latitude": ip.latitude,
-                                                "longitude": ip.longitude,
-                                            }
-                                        });
-                                        longitude_index.insert(ip.longitude);
-                                        println!("{} - {}", ip.ip, ip.city);
-                                        mapdata
-                                            .write_all(format!("\n{}", json).as_bytes())
-                                            .expect("Couldn't write to /tmp/ipmap.json");
-                                    }
-                                    latitude_index.insert(ip.latitude);
-                                }
-                            }
-                            // If there was an error, send it to the logs.
-                            Err(error) => {
-                                Log::error(&current_ip.to_string());
-                                Log::error(&error);
-                            }
-                        }
-                    }
-                }
-                Some(_) | None => (),
-            },
-        }
-    }
-}
-
-// Set path for temporary file based on the operating system
-fn get_path() -> String {
-    if std::env::consts::OS == "windows" {
-        return "%userprofile%\\AppData\\Local\\Temp\\".to_string();
-    } else {
-        return "/tmp/".to_string();
-    }
-}
-
-fn rocket() {
-    println!("running the webserver part");
-    rocket::ignite().mount("/", routes![index]).launch();
-}
-
-#[get("/")]
-fn index() -> &'static str {
-    INDEX_STRING
+    ip::ipextract();
 }
