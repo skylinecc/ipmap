@@ -37,7 +37,6 @@ fn main() {
         thread::spawn(|| {
             web::rocket();
         });
-        open::that_in_background("localhost:8000");
     };
 
     ip::ipextract();
