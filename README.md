@@ -20,7 +20,7 @@ You must have privileges to capture using the pcap API. In order to give the bin
 
 Finally, execute it.
 ```
-# target/release/ipmap
+# ROCKET_PORT=<port> target/release/ipmap
 ```
 
 ## Command Line Options
