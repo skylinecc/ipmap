@@ -24,13 +24,7 @@ fn main() {
                 .required(false)
                 .takes_value(false),
         )
-        .arg(Arg::with_name("INPUT")
-            .help("Sets the input file to use")
-            .required(true)
-            .index(1)
-        )
         .get_matches();
-
 
     // Set log settings
     Log::set_opt(Opt::Release);
@@ -40,7 +34,7 @@ fn main() {
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
         thread::spawn(|| {
-            web::rocket(app);
+            web::rocket();
         });
     };
 
