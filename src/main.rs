@@ -7,17 +7,25 @@ extern crate rocket;
 
 use casual_logger::{Level, Log, Opt};
 use clap::{App, Arg};
-use std::thread;
+use std::{process::exit, thread};
+use users::{get_user_by_uid, get_current_uid};
 
 mod ip;
 mod locator;
 mod web;
 
 fn main() {
+    let user = get_user_by_uid(get_current_uid()).unwrap();
+
+    if user.name().to_string_lossy() != "root" {
+        eprintln!("ipmap: you must be root to execute ipmap.");
+        exit(5);
+    }
+
     // Set application details
     let app = App::new("ipmap")
         .version("0.1.0")
-        .author("Skyline High School Coding Club Authors <skylinecc@gmail.com")
+        .author("Skyline High School Coding Club Authors <skylinecc@gmail.com>")
         .arg(
             Arg::with_name("headless")
                 .long("headless")
