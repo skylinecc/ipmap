@@ -28,9 +28,10 @@ pub fn ipextract() {
                 Some(InternetSlice::Ipv4(header)) => {
                     let current_ip = header.source_addr();
                     println!("got an IP... {}", current_ip.to_string());
-                    if !ip_index.contains(&current_ip.to_string()) && !current_ip.is_private() {
+                    if !ip_index.contains(&current_ip.to_string()) {
                         println!("Got new IP {}, running the locator", current_ip.to_string());
                         ip_index.insert(current_ip.to_string());
+
                         // Run locator with the IP address, which returns Latitude and Longitude.
                         match Locator::get(current_ip.to_string()) {
                             Ok(ip) => {
