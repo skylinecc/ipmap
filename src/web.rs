@@ -2,9 +2,7 @@ use rocket::response::content;
 
 pub fn rocket() {
     println!("Running Webserver");
-    rocket::ignite()
-        .mount("/", routes![index, json])
-        .launch();
+    rocket::ignite().mount("/", routes![index, json]).launch();
 }
 
 #[get("/")]
@@ -14,5 +12,5 @@ fn index() -> content::Html<String> {
 
 #[get("/json")]
 fn json() -> &'static str {
-    "test"
+    "haahahaha please help me JSON is so hard..."
 }

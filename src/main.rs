@@ -2,15 +2,16 @@
 
 extern crate etherparse;
 extern crate pcap;
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
 use casual_logger::{Level, Log, Opt};
 use clap::{App, Arg};
 use std::thread;
 
+mod ip;
 mod locator;
 mod web;
-mod ip;
 
 fn main() {
     // Set application details
