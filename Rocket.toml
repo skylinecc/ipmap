@@ -1,0 +1,9 @@
+[development]
+log = "off"
+
+[staging]
+log = "off"
+
+[production]
+log = "off"
+

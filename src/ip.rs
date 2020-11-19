@@ -1,4 +1,4 @@
-use crate::locator::Locator;
+use locator::Locator;
 use casual_logger::Log;
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;

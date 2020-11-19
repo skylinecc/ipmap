@@ -12,7 +12,6 @@ use std::{process::exit, thread};
 use users::{get_user_by_uid, get_current_uid};
 
 mod ip;
-mod locator;
 mod web;
 
 fn main() {

@@ -6,12 +6,36 @@
 	  <meta charset="utf-8" />
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="icon.png"  type="image/png">
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <style type="text/css" media="screen">
+    h1 {
+      color: #F2F2F2;
+      text-align: center;
+      font-family: sans-serif;
+    }
+    body {
+      background: #252525;
+    }
+    .container {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: auto;
+      margin-bottom: auto;
+      width: 75%;
+      background: #F2F2F2;
+      border-radius: 25px;
+      text-align: center;
+      width: 95vw;
+      height: 80vh;
+      margin: 0 auto;
+    }
+    </style>
   </head>
   <body>
-    <h1 align="center" style="font-family: sans-serif;">IP Connection Map</h1>
-    <div id="mapid" style="width: 90vw; height: 70vh; margin: 0 auto;"></div>
+    <h1>IP Connection Map</h1>
+    <div id="mapid" class="container"></div>
     <script>
 	    var ipmap = L.map('mapid').setView([20, 0], 2);
 
