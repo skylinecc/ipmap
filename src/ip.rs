@@ -53,8 +53,6 @@ pub fn ipextract() {
                                 Log::error(&error);
                             }
                         }
-                    } else {
-                        continue;
                     }
                 }
                 Some(_) | None => (),

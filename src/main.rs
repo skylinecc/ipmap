@@ -1,5 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+extern crate rocket_include_static_resources;
 extern crate etherparse;
 extern crate pcap;
 #[macro_use]
