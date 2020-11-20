@@ -1,4 +1,4 @@
-use locator::Locator;
+use ipgeolocate::Locator;
 use casual_logger::Log;
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
@@ -26,7 +26,7 @@ pub fn ipextract() {
                         ip_index.insert(current_ip.to_string());
 
                         // Run locator with the IP address, which returns Latitude and Longitude.
-                        match Locator::get(current_ip.to_string()) {
+                        match Locator::get_ipv4(current_ip) {
                             Ok(ip) => {
                                 if !latitude_index.contains(&ip.longitude) {
                                     if !longitude_index.contains(&ip.longitude) {
