@@ -16,7 +16,7 @@ mod ip;
 mod web;
 
 pub static IP_MAP: Lazy<RwLock<Vec<[String; 3]>>> = once_cell::sync::Lazy::new(|| {
-  RwLock::new(vec!(["[]".to_string(), "[]".to_string(), "[]".to_string()]))
+    RwLock::new(vec!([String::new(), String::new(), String::new()]))
 });
 
 fn main() {

@@ -43,9 +43,8 @@ pub fn ipextract() {
                             }
                             // If there was an error, send it to the logs.
                             Err(error) => {
-                                eprintln!("locator() error: {} ({})", current_ip.to_string(), error);
-                                Log::error(&current_ip.to_string());
-                                Log::error(&error);
+                                eprintln!("location error: {} ({})", current_ip.to_string(), error);
+                                Log::error(&format!("Location error: {} ({})", current_ip.to_string(), error));
                             }
                         }
                     }
