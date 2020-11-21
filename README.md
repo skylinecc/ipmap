@@ -3,8 +3,7 @@
 A program which maps the ip addresses of the servers you connect to onto a world map in real time.
 
 ## Requirements 
-ipmap uses `libpcap`, which is only easily available on UNIX-like systems (macOS, Linux, FreeBSD, OpenBSD, NetBSD). Building for Windows is a little harder. See the [rust pcap repo](https://github.com/ebfull/pcap) for more info.
-
+ipmap uses `libpcap`, which is only easily available on UNIX-like systems (macOS, Linux, FreeBSD, OpenBSD, NetBSD).
 ## Building
 Because this program is written in rust, you must have cargo [installed](https://www.rust-lang.org/tools/install).
 

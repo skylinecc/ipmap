@@ -2,7 +2,9 @@ use ipgeolocate::Locator;
 use casual_logger::Log;
 use etherparse::{InternetSlice, SlicedPacket};
 use pcap::Device;
-use std::{collections::HashSet, sync::Arc, sync::Mutex};
+use std::collections::HashSet;
+
+use crate::IP_MAP;
 
 pub fn ipextract() {
     println!("Running IP Detection");
@@ -30,15 +32,8 @@ pub fn ipextract() {
                             Ok(ip) => {
                                 if !latitude_index.contains(&ip.longitude) {
                                     if !longitude_index.contains(&ip.longitude) {
-                                        let json_index: Arc<
-                                            Mutex<HashSet<(String, String, String)>>,
-                                        > = Arc::new(Mutex::new(HashSet::new()));
 
-                                        json_index.lock().unwrap().insert((
-                                            ip.ip.clone(),
-                                            ip.latitude.clone(),
-                                            ip.longitude.clone(),
-                                        ));
+                                        IP_MAP.write().unwrap().push([ip.ip.clone(), ip.latitude.clone(), ip.longitude.clone()]);
 
                                         println!("{} ({})", ip.ip, ip.city);
                                         longitude_index.insert(ip.longitude);
