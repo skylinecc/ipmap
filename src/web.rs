@@ -34,6 +34,8 @@ struct IPAddress {
 fn json() -> content::Json<String> {
     let mut json: String = String::new();
 
+    json.push_str("[\n");
+
     for a in &*IP_MAP.read().unwrap() {
         let address = IPAddress {
             ip: a[0].to_owned(),
@@ -50,8 +52,10 @@ fn json() -> content::Json<String> {
             }
         };
 
-        json.push_str(&serialized);
+        json.push_str(&format!("{},\n", serialized));
     };
+
+    json.push_str("]\n");
 
     content::Json(json)
 }
