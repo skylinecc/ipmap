@@ -1,7 +1,7 @@
 [package]
 name = "ipmap"
 version = "0.1.0"
-authors = ["Aditya Suresh <ethanaditya@gmail.com>", "Grant H. <grantshandy@gmail.com", "Nick Z. <nicholasz2510@gmail.com>"]
+authors = ["Aditya Suresh <ethanaditya@gmail.com>", "Grant H. <grantshandy@gmail.com>", "Nick Z. <nicholasz2510@gmail.com>"]
 edition = "2018"
 license = "GPL-3.0"
 description = "An interactive map that shows connected IP addresses."
