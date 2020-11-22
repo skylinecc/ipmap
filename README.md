@@ -1,6 +1,6 @@
 <h1 align="center">ipmap</h1>
 
-<p align="center">A program which maps the ip addresses of the servers you connect to onto a world map in real time.</p>
+<p align="center">An interactive map that shows connected IP addresses.</p>
 
 
 <p align="center" class="aligncenter">
