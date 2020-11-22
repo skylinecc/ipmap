@@ -30,7 +30,7 @@ struct IPAddress {
     longitude: String,
 }
 
-#[get("/json")]
+#[get("/map.json")]
 fn json() -> content::Json<String> {
     let mut json: String = String::new();
 
