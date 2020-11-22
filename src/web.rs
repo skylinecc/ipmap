@@ -54,8 +54,9 @@ fn json() -> content::Json<String> {
 
         json.push_str(&format!("{},\n", serialized));
     };
-
-    json.push_str("]\n");
+    
+    json = (&json[0..json.len() - 2]).to_string();
+    json.push_str("\n]\n");
 
     content::Json(json)
 }

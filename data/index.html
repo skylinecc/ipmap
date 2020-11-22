@@ -63,29 +63,31 @@
 		    zoomOffset: -1
       }).addTo(ipmap);
 
-      var jsonText = [
-        {"ip":"162.245.207.243","latitude":"32.7766642","longitude":"-96.7969879"},
-        {"ip":"162.159.133.234","latitude":"37.718128","longitude":"-122.4343849"},
-        {"ip":"209.126.119.96","latitude":"33.4941704","longitude":"-111.9260519"},
-        {"ip":"35.186.224.47","latitude":"39.0997265","longitude":"-94.5785667"},
-        {"ip":"173.194.198.189","latitude":"40.735657","longitude":"-74.1723667"},
-        {"ip":"172.217.1.206","latitude":"43.653226","longitude":"-79.3831843"},
-        {"ip":"172.217.11.234","latitude":"39.7392358","longitude":"-104.990251"}
-      ]
-      //fetch("map.json")
-      //	.then(res => res.json())
-      //	.then(json => jsonText = json)
-      //	.then(() => console.log(jsonText));
-      
-      console.log(jsonText);
-      
-      for(var i = 0; i < jsonText.length; i++) {
-        var obj = jsonText[i];
+      // var jsonText = [
+      //  {"ip":"162.245.207.243","latitude":"32.7766642","longitude":"-96.7969879"},
+      //  {"ip":"162.159.133.234","latitude":"37.718128","longitude":"-122.4343849"},
+      //  {"ip":"209.126.119.96","latitude":"33.4941704","longitude":"-111.9260519"},
+      //  {"ip":"35.186.224.47","latitude":"39.0997265","longitude":"-94.5785667"},
+      //  {"ip":"173.194.198.189","latitude":"40.735657","longitude":"-74.1723667"},
+      //  {"ip":"172.217.1.206","latitude":"43.653226","longitude":"-79.3831843"},
+      //  {"ip":"172.217.11.234","latitude":"39.7392358","longitude":"-104.990251"}
+      //]
+     	
+     	function addMarkers(jsonText) {
+     		console.log(jsonText)
+     		for(var i = 1; i < jsonText.length; i++) {
+					var obj = jsonText[i];
 
-        console.log(obj.ip);
-        L.marker([obj.latitude, obj.longitude]).addTo(ipmap);
-      }
+					console.log(obj.ip);
+					L.marker([obj.latitude, obj.longitude]).addTo(ipmap);
+				}
+     	}
       
+      var jsonText;
+      fetch("map.json")
+      	.then(res => res.json())
+      	.then(json => jsonText = json)
+      	.then(() => addMarkers(jsonText));
 
       var popup = L.popup();
     </script>
