@@ -1,6 +1,7 @@
-# (WIP) ipmap
+<h1 align="center">ipmap</h1>
 
-A program which maps the ip addresses of the servers you connect to onto a world map in real time.
+<p align="center">A program which maps the ip addresses of the servers you connect to onto a world map in real time.</p>
+![screenshot]("https://github.com/skylinecc/ipmap/blob/main/data/screenshot.png)
 
 ## Requirements 
 ipmap uses `libpcap`, which is only easily available on UNIX-like systems (macOS, Linux, FreeBSD, OpenBSD, NetBSD).
