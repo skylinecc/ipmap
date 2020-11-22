@@ -8,7 +8,7 @@
 </p>
 
 ## Requirements 
-ipmap uses `libpcap`, which is only easily available on UNIX-like systems (macOS, Linux, FreeBSD, OpenBSD, NetBSD).
+ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (macOS, Linux, FreeBSD, OpenBSD, NetBSD).
 ## Building
 Because this program is written in rust, you must have cargo [installed](https://www.rust-lang.org/tools/install).
 
