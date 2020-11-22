@@ -10,9 +10,14 @@
 ## Requirements 
 ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (macOS, Linux, FreeBSD, OpenBSD, NetBSD).
 ## Building
-Because this program is written in rust, you must have cargo [installed](https://www.rust-lang.org/tools/install).
+Because this program is written in rust, you must have rust [installed](https://www.rust-lang.org/tools/install).
 
-First, build it:
+Sadly, [rocket](https://rocket.rs) requires rust nightly as of now, so do:
+```
+rustup default nightly
+```
+
+Next, build it:
 ```
 $ cargo build --release
 ```
