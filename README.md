@@ -14,7 +14,7 @@ Because this program is written in rust, you must have rust [installed](https://
 
 Sadly, [rocket](https://rocket.rs) requires rust nightly as of now, so do:
 ```
-rustup default nightly
+$ rustup default nightly
 ```
 
 Next, build it:
