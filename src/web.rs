@@ -14,7 +14,7 @@ pub fn rocket() {
                 "data/icon.png",
             );
         }))
-        .mount("/", routes![index, icon, json, license])
+        .mount("/", routes![index, icon, json, license, js])
         .launch();
 }
 
@@ -22,6 +22,12 @@ pub fn rocket() {
 fn index() -> content::Html<String> {
     content::Html(format!("{}", include_str!("../data/index.html")))
 }
+
+#[get("/map.js")]
+fn js() -> content::JavaScript<String> {
+    content::JavaScript(format!("{}", include_str!("../data/map.js")))
+}
+
 
 #[get("/license")]
 fn license() -> content::Html<String> {
