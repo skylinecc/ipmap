@@ -24,8 +24,10 @@ You must have privileges to capture using the pcap API. In order to give the bin
 
 Finally, execute it.
 ```
-# ROCKET_PORT=<port> target/release/ipmap
+# target/release/ipmap
 ```
+
+**To use it navigate to your web browser and go to `localhost:8000`, where the map will appear**
 
 ## Command Line Options
 ```
