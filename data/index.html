@@ -62,34 +62,37 @@
 		    tileSize: 512,
 		    zoomOffset: -1
       }).addTo(ipmap);
-
-      // var jsonText = [
-      //  {"ip":"162.245.207.243","latitude":"32.7766642","longitude":"-96.7969879"},
-      //  {"ip":"162.159.133.234","latitude":"37.718128","longitude":"-122.4343849"},
-      //  {"ip":"209.126.119.96","latitude":"33.4941704","longitude":"-111.9260519"},
-      //  {"ip":"35.186.224.47","latitude":"39.0997265","longitude":"-94.5785667"},
-      //  {"ip":"173.194.198.189","latitude":"40.735657","longitude":"-74.1723667"},
-      //  {"ip":"172.217.1.206","latitude":"43.653226","longitude":"-79.3831843"},
-      //  {"ip":"172.217.11.234","latitude":"39.7392358","longitude":"-104.990251"}
-      //]
      	
+     	var alreadyAdded = new Set();
+			
      	function addMarkers(jsonText) {
      		console.log(jsonText)
      		for(var i = 1; i < jsonText.length; i++) {
 					var obj = jsonText[i];
+					
+					if (alreadyAdded.has(obj.ip)) {
+						continue;
+					}
 
 					console.log(obj.ip);
 					L.marker([obj.latitude, obj.longitude]).addTo(ipmap);
+					alreadyAdded.add(obj.ip);
 				}
      	}
-      
-      var jsonText;
-      fetch("map.json")
-      	.then(res => res.json())
-      	.then(json => jsonText = json)
-      	.then(() => addMarkers(jsonText));
+     	
+		  var jsonText;
+		  
+      (function loop() {
+				setTimeout(function () {
+    			fetch("map.json")
+		    	.then(res => res.json())
+		    	.then(json => jsonText = json)
+		    	.then(() => addMarkers(jsonText));
+					loop()
+				}, 10000);
+			}());
 
-      var popup = L.popup();
+      //var popup = L.popup();
     </script>
   </body>
 </html>
