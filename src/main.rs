@@ -38,6 +38,14 @@ fn main() {
                 .required(false)
                 .takes_value(false),
         )
+        .arg(
+            Arg::with_name("service")
+                .long("service")
+                .short("s")
+                .help("Choose what service to get IP locations from. Must either be 'ipwhois' or 'ip-api'.")
+                .required(false)
+                .takes_value(true),
+        )
         .get_matches();
 
     // Set log settings
@@ -45,12 +53,27 @@ fn main() {
     Log::remove_old_logs();
     Log::set_level(Level::Notice);
 
-    // Run page.html in another thread IF the headless option is not used.
-    if !app.is_present("headless") {
+    if app.is_present("service") && app.value_of("service") == Some("ipwhois") {
         thread::spawn(|| {
-            web::rocket();
+            ip::ipextract("ipwhois");
         });
+    } else if app.is_present("service") && app.value_of("service") == Some("ip-api") {
+        thread::spawn(|| {
+            ip::ipextract("ip-api");
+        });
+    } else if !app.is_present("service") {
+        thread::spawn(|| {
+            ip::ipextract("ip-api");
+        });
+    } else if app.is_present("service") {
+        let error = format!("\"service\" must be either ipwhois or ip-api");
+        eprintln!("{}", error);
+        Log::error(&format!("{}", error));
+        exit(1);
     };
 
-    ip::ipextract();
+    // Run page.html in another thread IF the headless option is not used.
+    if !app.is_present("headless") {
+            web::rocket();
+    };
 }
