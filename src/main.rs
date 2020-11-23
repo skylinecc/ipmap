@@ -63,7 +63,7 @@ fn main() {
         });
     } else if !app.is_present("service") {
         thread::spawn(|| {
-            ip::ipextract("ip-api");
+            ip::ipextract("ipwhois");
         });
     } else if app.is_present("service") {
         let error = format!("\"service\" must be either ipwhois or ip-api");
