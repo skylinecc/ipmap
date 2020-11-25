@@ -29,14 +29,32 @@ fn main() {
 
     // Set application details
     let app = App::new("ipmap")
-        .version("0.1.0")
+        .version("0.1.1")
         .author("Skyline High School Coding Club Authors <skylinecc@gmail.com>")
         .arg(
             Arg::with_name("headless")
                 .long("headless")
-                .help("Launches the program without opening the browser")
+                .help("Launches the program without running the webserver")
                 .required(false)
                 .takes_value(false),
+        )
+        .arg(
+            Arg::with_name("service")
+                .long("service")
+                .short("s")
+                .help("Geolocation API")
+                .required(false)
+                .takes_value(true)
+                .value_names(&["ipwhois", "freegeoip", "ipapi", "ipapico"])
+        )
+        .arg(
+            Arg::with_name("output")
+                .long("output")
+                .short("o")
+                .help("Save JSON to a file")
+                .required(false)
+                .takes_value(true)
+                .value_name("FILE")
         )
         .get_matches();
 
@@ -52,5 +70,5 @@ fn main() {
         });
     };
 
-    ip::ipextract();
+    ip::ipextract(app);
 }
