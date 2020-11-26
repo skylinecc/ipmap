@@ -8,7 +8,7 @@ An interactive map that shows connected IP addresses.
 ## Requirements 
 ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (Linux, MacOS, *BSD).
 
-Soon there will be multiple different ways to capture packets. This means it will be able to be run without root and on Windows.
+Windows is possible, but [WinPcap](https://github.com/ebfull/pcap#windows) is required before build time.
 
 ## Building
 Because this program is written in rust, you must have rust [installed](https://www.rust-lang.org/tools/install).
@@ -30,10 +30,36 @@ Finally, execute it.
 
 **To use it navigate to your web browser and go to `localhost:700`, where the map will appear**
 
+## Services
+The IP geolocation service used in ipmap can be changed at the start using the command line flag.
+
+Each service included in this library has a weekly, hourly, or monthly limit.
+Some have more free queries, but are less reliable.
+
+Here are the query limits:
+
+| Service       | Limit                     |
+| ---------     | ------------------------- |
+| ipwhois       | 10,000/month              |
+| freegeoip     | 15,000/hour               |
+| ipapi         | 45/minute                 |
+| ipapico       | 1,000/day (30,000/month)  |
+
+If no service specified, ipapi will be used, which will limit how many IP is detected per minute.
+
 ## Command Line Options
 ```
+ipmap 0.1.2
+Skyline High School Coding Club Authors <skylinecc@gmail.com>
+
+USAGE:
+    ipmap [FLAGS] [OPTIONS]
+
 FLAGS:
     -h, --help        Prints help information
-        --headless    Launches the program without opening the browser
+        --headless    Launches the program without running the webserver
     -V, --version     Prints version information
+
+OPTIONS:
+    -s, --service <SERVICE>    Geolocation API
 ```
