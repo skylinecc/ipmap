@@ -17,7 +17,7 @@ function addMarkers(jsonText) {
 
 		console.log(obj.ip);
 
-		document.getElementById("totalips").innerHTML = jsonText.length - 1 + "Unique IP's";
+		document.getElementById("totalIps").innerHTML = jsonText.length - 1 + " Unique IP's";
 
 		L.marker([obj.latitude, obj.longitude]).addTo(ipmap)
 // .bindpopup(obj.ip);
