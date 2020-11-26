@@ -6,8 +6,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 var alreadyAdded = new Set();
 
-var ipIndex = 0;
-
 function addMarkers(jsonText) {
 	console.log(jsonText)
 	for(var i = 1; i < jsonText.length; i++) {
@@ -19,9 +17,7 @@ function addMarkers(jsonText) {
 
 		console.log(obj.ip);
 
-		ipIndex = ipIndex + 1;
-
-		document.getElementById("totalips").innerHTML = ipIndex + " Unique IPs";
+		document.getElementById("totalips").innerHTML = jsonText.length - 1 + "Unique IP's";
 
 		L.marker([obj.latitude, obj.longitude]).addTo(ipmap)
 // .bindpopup(obj.ip);
