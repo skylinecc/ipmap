@@ -2,7 +2,7 @@
 
 <p align="center">
 An interactive map that shows connected IP addresses.
-[![screenshot](data/screenshot.png)](https://github.com/skylinecc/ipmap/)
+<img src=data/screenshot.png>
 </p>
 
 ## Requirements 
