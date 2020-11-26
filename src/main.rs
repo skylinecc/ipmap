@@ -10,6 +10,7 @@ use casual_logger::{Level, Log, Opt};
 use clap::{App, Arg};
 use once_cell::sync::Lazy;
 use std::{process::exit, sync::RwLock, thread};
+#[cfg(unix)]
 use users::{get_current_uid, get_user_by_uid};
 
 mod ip;
@@ -20,8 +21,20 @@ const VERSION: &'static str = "0.1.2";
 pub static IP_MAP: Lazy<RwLock<Vec<[String; 3]>>> =
     once_cell::sync::Lazy::new(|| RwLock::new(vec![[String::new(), String::new(), String::new()]]));
 
+#[cfg(windows)]
+struct User {}
+#[cfg(windows)]
+impl User {
+    fn name(&self) -> &std::ffi::OsStr {
+        std::ffi::OsStr::new("windows-uknown")
+    }
+}
+
 fn main() {
+    #[cfg(unix)]
     let user = get_user_by_uid(get_current_uid()).unwrap();
+    #[cfg(windows)]
+    let user = User {};
 
     if user.name().to_string_lossy() != "root" {
         eprintln!("ipmap: you must be root to execute ipmap.");
