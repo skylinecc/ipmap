@@ -1,23 +1,24 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-extern crate rocket_include_static_resources;
 extern crate etherparse;
 extern crate pcap;
+extern crate rocket_include_static_resources;
 #[macro_use]
 extern crate rocket;
 
 use casual_logger::{Level, Log, Opt};
-use once_cell::sync::Lazy;
 use clap::{App, Arg};
-use std::{process::exit, thread, sync::RwLock};
-use users::{get_user_by_uid, get_current_uid};
+use once_cell::sync::Lazy;
+use std::{process::exit, sync::RwLock, thread};
+use users::{get_current_uid, get_user_by_uid};
 
 mod ip;
 mod web;
 
-pub static IP_MAP: Lazy<RwLock<Vec<[String; 3]>>> = once_cell::sync::Lazy::new(|| {
-    RwLock::new(vec!([String::new(), String::new(), String::new()]))
-});
+const VERSION: &'static str = "0.1.2";
+
+pub static IP_MAP: Lazy<RwLock<Vec<[String; 3]>>> =
+    once_cell::sync::Lazy::new(|| RwLock::new(vec![[String::new(), String::new(), String::new()]]));
 
 fn main() {
     let user = get_user_by_uid(get_current_uid()).unwrap();
@@ -29,7 +30,7 @@ fn main() {
 
     // Set application details
     let app = App::new("ipmap")
-        .version("0.1.1")
+        .version(VERSION)
         .author("Skyline High School Coding Club Authors <skylinecc@gmail.com>")
         .arg(
             Arg::with_name("headless")
@@ -45,16 +46,7 @@ fn main() {
                 .help("Geolocation API")
                 .required(false)
                 .takes_value(true)
-                .value_names(&["ipwhois", "freegeoip", "ipapi", "ipapico"])
-        )
-        .arg(
-            Arg::with_name("output")
-                .long("output")
-                .short("o")
-                .help("Save JSON to a file")
-                .required(false)
-                .takes_value(true)
-                .value_name("FILE")
+                .value_name("SERVICE"),
         )
         .get_matches();
 

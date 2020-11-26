@@ -1,18 +1,16 @@
-use ipgeolocate::Locator;
 use casual_logger::Log;
+use clap::ArgMatches;
 use etherparse::{InternetSlice, SlicedPacket};
+use ipgeolocate::Locator;
 use pcap::Device;
 use std::collections::HashSet;
-use clap::ArgMatches;
 
 use crate::IP_MAP;
 
 pub fn ipextract(app: ArgMatches) {
     println!("Running IP Detection");
 
-    if app.is_present("output") {
-
-    };
+    if app.is_present("output") {};
 
     let mut ip_index = HashSet::new();
     let mut latitude_index = HashSet::new();
@@ -38,8 +36,11 @@ pub fn ipextract(app: ArgMatches) {
                                 Ok(ip) => {
                                     if !latitude_index.contains(&ip.longitude.to_string()) {
                                         if !longitude_index.contains(&ip.longitude.to_string()) {
-
-                                            IP_MAP.write().unwrap().push([ip.ip.clone(), ip.latitude.to_string().clone(), ip.longitude.to_string().clone()]);
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
 
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
@@ -49,8 +50,16 @@ pub fn ipextract(app: ArgMatches) {
                                 }
                                 // If there was an error, send it to the logs.
                                 Err(error) => {
-                                    eprintln!("ipwhois error: {} ({})", current_ip.to_string(), error);
-                                    Log::error(&format!("ipwhois error: {} ({})", current_ip.to_string(), error));
+                                    eprintln!(
+                                        "ipwhois error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                    Log::error(&format!(
+                                        "ipwhois error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    ));
                                 }
                             }
                         } else if app.value_of("service") == Some("freegeoip") {
@@ -59,8 +68,11 @@ pub fn ipextract(app: ArgMatches) {
                                 Ok(ip) => {
                                     if !latitude_index.contains(&ip.longitude.to_string()) {
                                         if !longitude_index.contains(&ip.longitude.to_string()) {
-
-                                            IP_MAP.write().unwrap().push([ip.ip.clone(), ip.latitude.to_string().clone(), ip.longitude.to_string().clone()]);
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
 
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
@@ -70,8 +82,16 @@ pub fn ipextract(app: ArgMatches) {
                                 }
                                 // If there was an error, send it to the logs.
                                 Err(error) => {
-                                    eprintln!("freegeoip error: {} ({})", current_ip.to_string(), error);
-                                    Log::error(&format!("freegeoip error: {} ({})", current_ip.to_string(), error));
+                                    eprintln!(
+                                        "freegeoip error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                    Log::error(&format!(
+                                        "freegeoip error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    ));
                                 }
                             }
                         } else if app.value_of("service") == Some("ipapi") {
@@ -80,8 +100,11 @@ pub fn ipextract(app: ArgMatches) {
                                 Ok(ip) => {
                                     if !latitude_index.contains(&ip.longitude.to_string()) {
                                         if !longitude_index.contains(&ip.longitude.to_string()) {
-
-                                            IP_MAP.write().unwrap().push([ip.ip.clone(), ip.latitude.to_string().clone(), ip.longitude.to_string().clone()]);
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
 
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
@@ -91,8 +114,16 @@ pub fn ipextract(app: ArgMatches) {
                                 }
                                 // If there was an error, send it to the logs.
                                 Err(error) => {
-                                    eprintln!("ipapi error: {} ({})", current_ip.to_string(), error);
-                                    Log::error(&format!("ipapi error: {} ({})", current_ip.to_string(), error));
+                                    eprintln!(
+                                        "ipapi error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                    Log::error(&format!(
+                                        "ipapi error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    ));
                                 }
                             }
                         } else if app.value_of("service") == Some("ipapico") {
@@ -101,8 +132,11 @@ pub fn ipextract(app: ArgMatches) {
                                 Ok(ip) => {
                                     if !latitude_index.contains(&ip.longitude.to_string()) {
                                         if !longitude_index.contains(&ip.longitude.to_string()) {
-
-                                            IP_MAP.write().unwrap().push([ip.ip.clone(), ip.latitude.to_string().clone(), ip.longitude.to_string().clone()]);
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
 
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
@@ -112,8 +146,16 @@ pub fn ipextract(app: ArgMatches) {
                                 }
                                 // If there was an error, send it to the logs.
                                 Err(error) => {
-                                    eprintln!("ipapico error: {} ({})", current_ip.to_string(), error);
-                                    Log::error(&format!("ipapico error: {} ({})", current_ip.to_string(), error));
+                                    eprintln!(
+                                        "ipapico error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                    Log::error(&format!(
+                                        "ipapico error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    ));
                                 }
                             }
                         } else {
@@ -122,8 +164,11 @@ pub fn ipextract(app: ArgMatches) {
                                 Ok(ip) => {
                                     if !latitude_index.contains(&ip.longitude.to_string()) {
                                         if !longitude_index.contains(&ip.longitude.to_string()) {
-
-                                            IP_MAP.write().unwrap().push([ip.ip.clone(), ip.latitude.to_string().clone(), ip.longitude.to_string().clone()]);
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
 
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
@@ -133,8 +178,16 @@ pub fn ipextract(app: ArgMatches) {
                                 }
                                 // If there was an error, send it to the logs.
                                 Err(error) => {
-                                    eprintln!("ipapi error: {} ({})", current_ip.to_string(), error);
-                                    Log::error(&format!("ipapi error: {} ({})", current_ip.to_string(), error));
+                                    eprintln!(
+                                        "ipapi error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                    Log::error(&format!(
+                                        "ipapi error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    ));
                                 }
                             }
                         }

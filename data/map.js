@@ -22,7 +22,8 @@ function addMarkers(jsonText) {
 		}
 
 		console.log(obj.ip);
-		L.marker([obj.latitude, obj.longitude]).addTo(ipmap);
+		L.marker([obj.latitude, obj.longitude]).addTo(ipmap)
+// .bindpopup(obj.ip);
 		alreadyAdded.add(obj.ip);
 	}
 }

@@ -1,23 +1,19 @@
 <h1 align="center">ipmap</h1>
 
-<p align="center">An interactive map that shows connected IP addresses.</p>
-
-
-<p align="center" class="aligncenter">
-    <img src=https://github.com/skylinecc/ipmap/blob/main/data/screenshot.png>
+<p align="center">
+An interactive map that shows connected IP addresses.
+[![screenshot](data/screenshot.png)](https://github.com/skylinecc/ipmap/)
 </p>
 
 ## Requirements 
-ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (macOS, Linux, FreeBSD, OpenBSD, NetBSD).
+ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (Linux, MacOS, *BSD).
+
+Soon there will be multiple different ways to capture packets. This means it will be able to be run without root and on Windows.
+
 ## Building
 Because this program is written in rust, you must have rust [installed](https://www.rust-lang.org/tools/install).
 
-Sadly, [rocket](https://rocket.rs) requires rust nightly as of now, so do:
-```
-$ rustup default nightly
-```
-
-Next, build it:
+First, build it:
 ```
 $ cargo build --release
 ```
@@ -32,7 +28,7 @@ Finally, execute it.
 # target/release/ipmap
 ```
 
-**To use it navigate to your web browser and go to `localhost:8000`, where the map will appear**
+**To use it navigate to your web browser and go to `localhost:700`, where the map will appear**
 
 ## Command Line Options
 ```
