@@ -16,7 +16,12 @@ pub fn ipextract(app: ArgMatches) {
     let mut latitude_index = HashSet::new();
     let mut longitude_index = HashSet::new();
 
-    let mut cap = Device::lookup().unwrap().open().unwrap();
+    #[cfg(unix)]
+    let cap = Device::lookup().unwrap();
+    #[cfg(windows)]
+    let cap = user_select_device();
+
+    let mut cap = cap.open().unwrap();
 
     // Loop through each packet in the capture interface as an iterator until it returns an error.
     while let Ok(packet) = cap.next() {
@@ -197,4 +202,39 @@ pub fn ipextract(app: ArgMatches) {
             },
         }
     }
+}
+
+#[cfg(windows)]
+fn user_select_device() -> Device {
+    let mut devices = Device::list().unwrap();
+    if devices.is_empty() {
+        println!("Found no device to listen on, maybe you need to run as an Adminstrator");
+        std::process::exit(1);
+    }
+    println!("Select which device to listen on: (choose the number of the item)");
+    for (i, d) in devices.iter().enumerate() {
+        println!("{}: {:?}", i, d);
+    }
+    use std::io;
+
+    let mut input = String::new();
+    let n = loop {
+        io::stdin().read_line(&mut input).unwrap();
+        match input.trim().parse() {
+            Ok(n) => {
+                if n < devices.len() {
+                    break n;
+                } else {
+                    println!("Invalid choice, try again");
+                    input.clear();
+                }
+            }
+            Err(_) => {
+                println!("Invalid choice, try again");
+                input.clear();
+            }
+        }
+    };
+    println!("Listening on {:?}", devices[n]);
+    devices.remove(n)
 }
