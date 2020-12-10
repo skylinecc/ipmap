@@ -28,7 +28,7 @@ Finally, execute it.
 # target/release/ipmap
 ```
 
-**To use it navigate to your web browser and go to `localhost:700`, where the map will appear**
+**To use it navigate to your web browser and go to `localhost:700`, where the map will appear.**
 
 ## Services
 The IP geolocation service used in ipmap can be changed at the start using the command line flag.
