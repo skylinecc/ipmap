@@ -50,6 +50,7 @@ pub fn rocket() {
             ],
         )
         .launch();
+        println!("Launched webserver at localhost:700");
 }
 
 #[get("/")]
