@@ -1,16 +1,14 @@
-use casual_logger::Log;
 use clap::ArgMatches;
 use etherparse::{InternetSlice, SlicedPacket};
 use ipgeolocate::Locator;
 use pcap::Device;
 use std::collections::HashSet;
+use serde::{Deserialize, Serialize};
 
-use crate::IP_MAP;
+use crate::{IP_MAP, WRITE_PATH};
 
 pub fn ipextract(app: ArgMatches) {
     println!("Running IP Detection");
-
-    if app.is_present("output") {};
 
     let mut ip_index = HashSet::new();
     let mut latitude_index = HashSet::new();
@@ -27,8 +25,8 @@ pub fn ipextract(app: ArgMatches) {
     while let Ok(packet) = cap.next() {
         match SlicedPacket::from_ethernet(packet.data) {
             Err(error) => {
-                Log::error(&error.to_string());
-            }
+                eprintln!("{}", &error.to_string());
+            },
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
                     let current_ip = header.source_addr();
@@ -47,6 +45,10 @@ pub fn ipextract(app: ArgMatches) {
                                                 ip.longitude.to_string().clone(),
                                             ]);
 
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
                                         }
@@ -60,11 +62,6 @@ pub fn ipextract(app: ArgMatches) {
                                         current_ip.to_string(),
                                         error
                                     );
-                                    Log::error(&format!(
-                                        "ipwhois error: {} ({})",
-                                        current_ip.to_string(),
-                                        error
-                                    ));
                                 }
                             }
                         } else if app.value_of("service") == Some("freegeoip") {
@@ -79,6 +76,10 @@ pub fn ipextract(app: ArgMatches) {
                                                 ip.longitude.to_string().clone(),
                                             ]);
 
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
                                         }
@@ -92,11 +93,6 @@ pub fn ipextract(app: ArgMatches) {
                                         current_ip.to_string(),
                                         error
                                     );
-                                    Log::error(&format!(
-                                        "freegeoip error: {} ({})",
-                                        current_ip.to_string(),
-                                        error
-                                    ));
                                 }
                             }
                         } else if app.value_of("service") == Some("ipapi") {
@@ -111,6 +107,10 @@ pub fn ipextract(app: ArgMatches) {
                                                 ip.longitude.to_string().clone(),
                                             ]);
 
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
                                         }
@@ -124,11 +124,6 @@ pub fn ipextract(app: ArgMatches) {
                                         current_ip.to_string(),
                                         error
                                     );
-                                    Log::error(&format!(
-                                        "ipapi error: {} ({})",
-                                        current_ip.to_string(),
-                                        error
-                                    ));
                                 }
                             }
                         } else if app.value_of("service") == Some("ipapico") {
@@ -143,6 +138,10 @@ pub fn ipextract(app: ArgMatches) {
                                                 ip.longitude.to_string().clone(),
                                             ]);
 
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
                                         }
@@ -156,11 +155,6 @@ pub fn ipextract(app: ArgMatches) {
                                         current_ip.to_string(),
                                         error
                                     );
-                                    Log::error(&format!(
-                                        "ipapico error: {} ({})",
-                                        current_ip.to_string(),
-                                        error
-                                    ));
                                 }
                             }
                         } else {
@@ -175,6 +169,10 @@ pub fn ipextract(app: ArgMatches) {
                                                 ip.longitude.to_string().clone(),
                                             ]);
 
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
                                             println!("{} ({})", ip.ip, ip.city);
                                             longitude_index.insert(ip.longitude.to_string());
                                         }
@@ -188,11 +186,6 @@ pub fn ipextract(app: ArgMatches) {
                                         current_ip.to_string(),
                                         error
                                     );
-                                    Log::error(&format!(
-                                        "ipapi error: {} ({})",
-                                        current_ip.to_string(),
-                                        error
-                                    ));
                                 }
                             }
                         }
@@ -208,7 +201,7 @@ pub fn ipextract(app: ArgMatches) {
 fn user_select_device() -> Device {
     let mut devices = Device::list().unwrap();
     if devices.is_empty() {
-        println!("Found no device to listen on, maybe you need to run as an Adminstrator");
+        eprintln!("Found no device to listen on, maybe you need to run as an Adminstrator");
         std::process::exit(1);
     }
     println!("Select which device to listen on: (choose the number of the item)");
@@ -237,4 +230,54 @@ fn user_select_device() -> Device {
     };
     println!("Listening on {:?}", devices[n]);
     devices.remove(n)
+}
+
+pub fn create_ip_json(address: IPAddress) -> String {
+    let serialized = match serde_json::to_string(&address) {
+        Ok(data) => data,
+        Err(error) => {
+            let error_string = format!("Error serializing JSON: {}", error);
+            eprintln!("{}", error_string);
+            error_string
+        }
+    };
+
+    return serialized;
+}
+
+fn write_ip() {
+    let path: String = WRITE_PATH.read().unwrap().clone();
+
+    let json: String = get_document();
+
+    fstream::write_text(path, json, true).unwrap();
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct IPAddress {
+    ip: String,
+    latitude: String,
+    longitude: String,
+}
+
+pub fn get_document() -> String {
+    let mut json: String = String::new();
+
+    json.push_str("[\n");
+
+    for a in &*IP_MAP.read().unwrap() {
+        let address = IPAddress {
+            ip: a[0].to_owned(),
+            latitude: a[1].to_owned(),
+            longitude: a[2].to_owned(),
+        };
+
+        let serialized = create_ip_json(address);
+
+        json.push_str(&format!("{},\n", serialized));
+    }
+
+    json = (&json[0..json.len() - 2]).to_string();
+    json.push_str("\n]\n");
+    json
 }

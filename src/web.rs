@@ -1,3 +1,5 @@
+use crate::ip::get_document;
+
 use rocket::{
     config::{Config, Environment, LoggingLevel},
     response::content,
@@ -5,16 +7,13 @@ use rocket::{
 use rocket_include_static_resources::{
     static_resources_initialize, static_response, StaticResponse,
 };
-use serde::{Deserialize, Serialize};
 
-use crate::IP_MAP;
-
-pub fn rocket() {
-    println!("Running Webserver");
+pub fn rocket(port: u16) {
+    println!("Launching application at localhost:{}", port);
 
     let config = Config::build(Environment::Staging)
         .address("127.0.0.1")
-        .port(700)
+        .port(port)
         .log_level(LoggingLevel::Off)
         .workers(12)
         .unwrap();
@@ -50,7 +49,6 @@ pub fn rocket() {
             ],
         )
         .launch();
-        println!("Launched webserver at localhost:700");
 }
 
 #[get("/")]
@@ -83,20 +81,6 @@ fn jquery() -> content::JavaScript<String> {
     content::JavaScript(format!("{}", include_str!("../data/jquery.min.js")))
 }
 
-#[derive(Serialize, Deserialize)]
-struct IPAddress {
-    ip: String,
-    latitude: String,
-    longitude: String,
-}
-
-#[get("/map.json")]
-fn json() -> content::Json<String> {
-    let json = get_document();
-
-    content::Json(json)
-}
-
 #[get("/icon.png")]
 fn icon() -> StaticResponse {
     static_response!("icon")
@@ -117,31 +101,9 @@ fn markershadow() -> StaticResponse {
     static_response!("markershadow")
 }
 
-pub fn get_document() -> String {
-    let mut json: String = String::new();
+#[get("/map.json")]
+fn json() -> content::Json<String> {
+    let json = get_document();
 
-    json.push_str("[\n");
-
-    for a in &*IP_MAP.read().unwrap() {
-        let address = IPAddress {
-            ip: a[0].to_owned(),
-            latitude: a[1].to_owned(),
-            longitude: a[2].to_owned(),
-        };
-
-        let serialized = match serde_json::to_string(&address) {
-            Ok(data) => data,
-            Err(error) => {
-                let error_string = format!("Error serializing JSON: {}", error);
-                eprintln!("{}", error_string);
-                error_string
-            }
-        };
-
-        json.push_str(&format!("{},\n", serialized));
-    }
-
-    json = (&json[0..json.len() - 2]).to_string();
-    json.push_str("\n]\n");
-    json
+    content::Json(json)
 }
