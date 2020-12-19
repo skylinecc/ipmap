@@ -265,7 +265,11 @@ pub fn get_document() -> String {
 
     json.push_str("[\n");
 
-    for a in &*IP_MAP.read().unwrap() {
+    let v = &*IP_MAP.read().unwrap();
+
+    let iter = v[1..].iter();
+
+    for a in iter {
         let address = IPAddress {
             ip: a[0].to_owned(),
             latitude: a[1].to_owned(),

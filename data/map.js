@@ -8,7 +8,7 @@ var alreadyAdded = new Set();
 
 function addMarkers(jsonText) {
 	console.log(jsonText)
-	for(var i = 1; i < jsonText.length; i++) {
+	for(var i = 0; i < jsonText.length; i++) {
 		var obj = jsonText[i];
 
 		if (alreadyAdded.has(obj.ip)) {
@@ -17,7 +17,7 @@ function addMarkers(jsonText) {
 
 		console.log(obj.ip);
 
-		document.getElementById("totalIps").innerHTML = jsonText.length - 1 + " Unique IP's";
+		document.getElementById("totalIps").innerHTML = jsonText.length + " Unique IP's";
 
 		L.marker([obj.latitude, obj.longitude]).addTo(ipmap)
 // .bindpopup(obj.ip);

@@ -59,7 +59,7 @@ fn main() {
             Arg::with_name("port")
                 .long("port")
                 .short("p")
-                .help("Set webserver port, default port 700")
+                .help("Set webserver port, if not set it defaults to port 700")
                 .required(false)
                 .takes_value(true)
                 .value_name("PORT"),

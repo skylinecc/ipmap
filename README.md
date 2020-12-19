@@ -1,9 +1,8 @@
 <h1 align="center">ipmap</h1>
 
-<p align="center">
-An interactive map that shows connected IP addresses.
-<img src=data/screenshot.png>
-</p>
+<p align="center">An interactive map that shows connected IP addresses.</p>
+<hr>
+<p align="center"><img src=data/screenshot.png></p>
 
 ## Requirements 
 ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (Linux, MacOS, *BSD).
@@ -49,8 +48,8 @@ If no service specified, ipapi will be used, which will limit how many IP is det
 
 ## Command Line Options
 ```
-ipmap 0.1.2
-Skyline High School Coding Club Authors <skylinecc@gmail.com>
+ipmap 0.1.5
+Skyline High Coding Club Authors
 
 USAGE:
     ipmap [FLAGS] [OPTIONS]
@@ -61,5 +60,7 @@ FLAGS:
     -V, --version     Prints version information
 
 OPTIONS:
-    -s, --service <SERVICE>    Geolocation API
+    -p, --port <PORT>             Set webserver port, default port 700
+    -s, --service <SERVICE>       Choose Geolocation API [possible values: ipwhois, ipapi, ipapico, freegeoip]
+    -w, --write-to-file <PATH>    Set path to write JSON to
 ```
