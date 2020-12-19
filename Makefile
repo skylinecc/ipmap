@@ -12,7 +12,7 @@ deb:
 
 	tar -xvf ./build-deb/ipmap_0.1.6.orig.tar.gz -C ./build-deb/ipmap_0.1.6/
 
-
+	cp -rf ./debian/ ./build-deb/ipmap_0.1.6/
 
 deb-clean:
 	rm -rf build-deb/
