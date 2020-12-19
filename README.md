@@ -1,7 +1,6 @@
 <h1 align="center">ipmap</h1>
 
 <p align="center">An interactive map that shows connected IP addresses.</p>
-<hr>
 <p align="center"><img src=data/screenshot.png></p>
 
 ## Requirements 
