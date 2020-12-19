@@ -1,0 +1,287 @@
+use clap::ArgMatches;
+use etherparse::{InternetSlice, SlicedPacket};
+use ipgeolocate::Locator;
+use pcap::Device;
+use std::collections::HashSet;
+use serde::{Deserialize, Serialize};
+
+use crate::{IP_MAP, WRITE_PATH};
+
+pub fn ipextract(app: ArgMatches) {
+    println!("Running IP Detection");
+
+    let mut ip_index = HashSet::new();
+    let mut latitude_index = HashSet::new();
+    let mut longitude_index = HashSet::new();
+
+    #[cfg(unix)]
+    let cap = Device::lookup().unwrap();
+    #[cfg(windows)]
+    let cap = user_select_device();
+
+    let mut cap = cap.open().unwrap();
+
+    // Loop through each packet in the capture interface as an iterator until it returns an error.
+    while let Ok(packet) = cap.next() {
+        match SlicedPacket::from_ethernet(packet.data) {
+            Err(error) => {
+                eprintln!("{}", &error.to_string());
+            },
+            Ok(value) => match value.ip {
+                Some(InternetSlice::Ipv4(header)) => {
+                    let current_ip = header.source_addr();
+                    if !ip_index.contains(&current_ip.to_string()) && !current_ip.is_private() {
+                        ip_index.insert(current_ip.to_string());
+
+                        if app.value_of("service") == Some("ipwhois") {
+                            // Run locator with the IP address, which returns Latitude and Longitude.
+                            match Locator::ipwhois(current_ip.to_string().as_str()) {
+                                Ok(ip) => {
+                                    if !latitude_index.contains(&ip.longitude.to_string()) {
+                                        if !longitude_index.contains(&ip.longitude.to_string()) {
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
+
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
+                                            println!("{} ({})", ip.ip, ip.city);
+                                            longitude_index.insert(ip.longitude.to_string());
+                                        }
+                                        latitude_index.insert(ip.latitude.to_string());
+                                    }
+                                }
+                                // If there was an error, send it to the logs.
+                                Err(error) => {
+                                    eprintln!(
+                                        "ipwhois error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                }
+                            }
+                        } else if app.value_of("service") == Some("freegeoip") {
+                            // Run locator with the IP address, which returns Latitude and Longitude.
+                            match Locator::freegeoip(current_ip.to_string().as_str()) {
+                                Ok(ip) => {
+                                    if !latitude_index.contains(&ip.longitude.to_string()) {
+                                        if !longitude_index.contains(&ip.longitude.to_string()) {
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
+
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
+                                            println!("{} ({})", ip.ip, ip.city);
+                                            longitude_index.insert(ip.longitude.to_string());
+                                        }
+                                        latitude_index.insert(ip.latitude.to_string());
+                                    }
+                                }
+                                // If there was an error, send it to the logs.
+                                Err(error) => {
+                                    eprintln!(
+                                        "freegeoip error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                }
+                            }
+                        } else if app.value_of("service") == Some("ipapi") {
+                            // Run locator with the IP address, which returns Latitude and Longitude.
+                            match Locator::ipapi(current_ip.to_string().as_str()) {
+                                Ok(ip) => {
+                                    if !latitude_index.contains(&ip.longitude.to_string()) {
+                                        if !longitude_index.contains(&ip.longitude.to_string()) {
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
+
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
+                                            println!("{} ({})", ip.ip, ip.city);
+                                            longitude_index.insert(ip.longitude.to_string());
+                                        }
+                                        latitude_index.insert(ip.latitude.to_string());
+                                    }
+                                }
+                                // If there was an error, send it to the logs.
+                                Err(error) => {
+                                    eprintln!(
+                                        "ipapi error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                }
+                            }
+                        } else if app.value_of("service") == Some("ipapico") {
+                            // Run locator with the IP address, which returns Latitude and Longitude.
+                            match Locator::ipapico(current_ip.to_string().as_str()) {
+                                Ok(ip) => {
+                                    if !latitude_index.contains(&ip.longitude.to_string()) {
+                                        if !longitude_index.contains(&ip.longitude.to_string()) {
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
+
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
+                                            println!("{} ({})", ip.ip, ip.city);
+                                            longitude_index.insert(ip.longitude.to_string());
+                                        }
+                                        latitude_index.insert(ip.latitude.to_string());
+                                    }
+                                }
+                                // If there was an error, send it to the logs.
+                                Err(error) => {
+                                    eprintln!(
+                                        "ipapico error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                }
+                            }
+                        } else {
+                            // Run locator with the IP address, which returns Latitude and Longitude.
+                            match Locator::ipapi(current_ip.to_string().as_str()) {
+                                Ok(ip) => {
+                                    if !latitude_index.contains(&ip.longitude.to_string()) {
+                                        if !longitude_index.contains(&ip.longitude.to_string()) {
+                                            IP_MAP.write().unwrap().push([
+                                                ip.ip.clone(),
+                                                ip.latitude.to_string().clone(),
+                                                ip.longitude.to_string().clone(),
+                                            ]);
+
+                                            if app.is_present("write-to-file") {
+                                                write_ip();
+                                            }
+
+                                            println!("{} ({})", ip.ip, ip.city);
+                                            longitude_index.insert(ip.longitude.to_string());
+                                        }
+                                        latitude_index.insert(ip.latitude.to_string());
+                                    }
+                                }
+                                // If there was an error, send it to the logs.
+                                Err(error) => {
+                                    eprintln!(
+                                        "ipapi error: {} ({})",
+                                        current_ip.to_string(),
+                                        error
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+                Some(_) | None => (),
+            },
+        }
+    }
+}
+
+#[cfg(windows)]
+fn user_select_device() -> Device {
+    let mut devices = Device::list().unwrap();
+    if devices.is_empty() {
+        eprintln!("Found no device to listen on, maybe you need to run as an Adminstrator");
+        std::process::exit(1);
+    }
+    println!("Select which device to listen on: (choose the number of the item)");
+    for (i, d) in devices.iter().enumerate() {
+        println!("{}: {:?}", i, d);
+    }
+    use std::io;
+
+    let mut input = String::new();
+    let n = loop {
+        io::stdin().read_line(&mut input).unwrap();
+        match input.trim().parse() {
+            Ok(n) => {
+                if n < devices.len() {
+                    break n;
+                } else {
+                    println!("Invalid choice, try again");
+                    input.clear();
+                }
+            }
+            Err(_) => {
+                println!("Invalid choice, try again");
+                input.clear();
+            }
+        }
+    };
+    println!("Listening on {:?}", devices[n]);
+    devices.remove(n)
+}
+
+pub fn create_ip_json(address: IPAddress) -> String {
+    let serialized = match serde_json::to_string(&address) {
+        Ok(data) => data,
+        Err(error) => {
+            let error_string = format!("Error serializing JSON: {}", error);
+            eprintln!("{}", error_string);
+            error_string
+        }
+    };
+
+    return serialized;
+}
+
+fn write_ip() {
+    let path: String = WRITE_PATH.read().unwrap().clone();
+
+    let json: String = get_document();
+
+    fstream::write_text(path, json, true).unwrap();
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct IPAddress {
+    ip: String,
+    latitude: String,
+    longitude: String,
+}
+
+pub fn get_document() -> String {
+    let mut json: String = String::new();
+
+    json.push_str("[\n");
+
+    let v = &*IP_MAP.read().unwrap();
+
+    let iter = v[1..].iter();
+
+    for a in iter {
+        let address = IPAddress {
+            ip: a[0].to_owned(),
+            latitude: a[1].to_owned(),
+            longitude: a[2].to_owned(),
+        };
+
+        let serialized = create_ip_json(address);
+
+        json.push_str(&format!("{},\n", serialized));
+    }
+
+    json = (&json[0..json.len() - 2]).to_string();
+    json.push_str("\n]\n");
+    json
+}

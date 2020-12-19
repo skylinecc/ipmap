@@ -1,0 +1,12 @@
+Source: ipmap
+Maintainer: Grant Handy <grantshandy@gmail.com>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 9)
+
+Package: ipmap
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: show connected IP addresses
+ An interactive map that shows connected IP addresses.
