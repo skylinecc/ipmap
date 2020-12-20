@@ -1,109 +1,107 @@
 use crate::ip::get_document;
 
-use rocket::{
-    config::{Config, Environment, LoggingLevel},
-    response::content,
-};
-use rocket_include_static_resources::{
-    static_resources_initialize, static_response, StaticResponse,
+use actix_web::{
+    dev::BodyEncoding, get, http::ContentEncoding, middleware, App, HttpResponse, HttpServer,
 };
 
-pub fn rocket(port: u16) {
-    println!("Launching application at localhost:{}", port);
+static MARKER_SHADOW: &[u8] = include_bytes!("../data/marker-shadow.png");
 
-    let config = Config::build(Environment::Staging)
-        .address("127.0.0.1")
-        .port(port)
-        .log_level(LoggingLevel::Off)
-        .workers(12)
-        .unwrap();
+#[actix_web::main]
+pub async fn webserv(port: u16) -> std::io::Result<()> {
+    println!("Starting application at localhost:{}", port);
 
-    rocket::custom(config)
-        .attach(StaticResponse::fairing(|resources| {
-            static_resources_initialize!(
-                resources,
-                "icon",
-                "data/icon.png",
-                "markericon",
-                "data/marker-icon.png",
-                "markericon2",
-                "data/marker-icon-2x.png",
-                "markershadow",
-                "data/marker-shadow.png",
-            );
-        }))
-        .mount(
-            "/",
-            routes![
-                markershadow,
-                markericon,
-                markericon2,
-                index,
-                icon,
-                json,
-                license,
-                js,
-                leafletcss,
-                leafletjs,
-                jquery
-            ],
-        )
-        .launch();
+    HttpServer::new(|| {
+        App::new()
+            .wrap(middleware::Compress::default())
+            .service(index)
+            .service(json)
+            .service(js)
+            .service(leafletcss)
+            .service(leafletjs)
+            .service(license)
+            .service(jquery)
+            .service(marker_shadow)
+    })
+    .bind(format!("127.0.0.1:{}", port))?
+    .run()
+    .await
 }
 
 #[get("/")]
-fn index() -> content::Html<String> {
-    content::Html(format!("{}", include_str!("../data/index.html")))
+async fn index() -> HttpResponse {
+    HttpResponse::Ok()
+        // v- disable compression
+        .encoding(ContentEncoding::Identity)
+        .body(include_str!("../data/index.html"))
 }
 
 #[get("/map.js")]
-fn js() -> content::JavaScript<String> {
-    content::JavaScript(format!("{}", include_str!("../data/map.js")))
+fn js() -> HttpResponse {
+    HttpResponse::Ok()
+        // v- disable compression
+        .encoding(ContentEncoding::Identity)
+        .body(include_str!("../data/map.js"))
 }
 
 #[get("/leaflet.css")]
-fn leafletcss() -> content::Css<String> {
-    content::Css(format!("{}", include_str!("../data/leaflet.css")))
+fn leafletcss() -> HttpResponse {
+    HttpResponse::Ok()
+        // v- disable compression
+        .encoding(ContentEncoding::Identity)
+        .body(include_str!("../data/leaflet.css"))
 }
 
 #[get("/leaflet.js")]
-fn leafletjs() -> content::JavaScript<String> {
-    content::JavaScript(format!("{}", include_str!("../data/leaflet.js")))
+fn leafletjs() -> HttpResponse {
+    HttpResponse::Ok()
+        // v- disable compression
+        .encoding(ContentEncoding::Identity)
+        .body(include_str!("../data/leaflet.js"))
 }
 
 #[get("/license")]
-fn license() -> content::Html<String> {
-    content::Html(format!("{}", include_str!("../data/license.html")))
+fn license() -> HttpResponse {
+    HttpResponse::Ok()
+        // v- disable compression
+        .encoding(ContentEncoding::Identity)
+        .body(include_str!("../data/license.html"))
 }
 
 #[get("/jquery.min.js")]
-fn jquery() -> content::JavaScript<String> {
-    content::JavaScript(format!("{}", include_str!("../data/jquery.min.js")))
+fn jquery() -> HttpResponse {
+    HttpResponse::Ok()
+        // v- disable compression
+        .encoding(ContentEncoding::Identity)
+        .body(include_str!("../data/jquery.min.js"))
 }
 
-#[get("/icon.png")]
-fn icon() -> StaticResponse {
-    static_response!("icon")
-}
+//#[get("/icon.png")]
+//fn icon() -> StaticResponse {
+//    static_response!("icon")
+//}
 
-#[get("/images/marker-icon.png")]
-fn markericon() -> StaticResponse {
-    static_response!("markericon")
-}
+//#[get("/images/marker-icon.png")]
+//fn markericon() -> StaticResponse {
+//    static_response!("markericon")
+//}
 
-#[get("/images/marker-icon-2x.png")]
-fn markericon2() -> StaticResponse {
-    static_response!("markericon2")
-}
+//#[get("/images/marker-icon-2x.png")]
+//fn markericon2() -> StaticResponse {
+//    static_response!("markericon2")
+//}
 
 #[get("/images/marker-shadow.png")]
-fn markershadow() -> StaticResponse {
-    static_response!("markershadow")
+fn marker_shadow() -> HttpResponse {
+    HttpResponse::Ok()
+        .encoding(ContentEncoding::Identity)
+        .header("Content-Type", "image/png")
+        .body(MARKER_SHADOW)
 }
 
 #[get("/map.json")]
-fn json() -> content::Json<String> {
-    let json = get_document();
-
-    content::Json(json)
+fn json() -> HttpResponse {
+    HttpResponse::Ok()
+        // v- disable compression
+        .encoding(ContentEncoding::Identity)
+        .body(get_document())
 }

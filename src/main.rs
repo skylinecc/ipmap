@@ -1,10 +1,5 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 extern crate etherparse;
 extern crate pcap;
-extern crate rocket_include_static_resources;
-#[macro_use]
-extern crate rocket;
 
 use clap::{crate_version, App, Arg, ArgMatches};
 use once_cell::sync::Lazy;
@@ -91,7 +86,7 @@ fn main() {
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
         thread::spawn(move || {
-            web::rocket(port);
+            web::webserv(port);
         });
     };
 
