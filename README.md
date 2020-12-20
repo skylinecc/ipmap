@@ -18,7 +18,7 @@ $ cargo build --release
 
 You must have privileges to capture using the pcap API. In order to give the binary the necessary permissions, run:
 ```
-# setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
+# sudo setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
 ```
 
 Finally, execute it.
