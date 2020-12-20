@@ -3,10 +3,10 @@ Maintainer: Grant Handy <grantshandy@gmail.com>
 Section: misc
 Priority: optional
 Standards-Version: 3.9.2
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9), libpcap-dev
 
 Package: ipmap
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libpcap,
 Description: show connected IP addresses
  An interactive map that shows connected IP addresses.

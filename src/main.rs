@@ -87,8 +87,11 @@ fn main() {
     if !app.is_present("headless") {
         thread::spawn(move || {
             match web::webserv(port) {
-                Ok(_) => println!("Starting application at localhost:{}", port),
-                Err(error) => println!("ERROR starting webserver: {}", error),
+                Ok(_) => println!("Finished webserv() successfully"),
+                Err(error) => {
+                    eprintln!("ERROR starting webserver: {}", error);
+                    std::process::exit(1);
+                },
             };
         });
     };

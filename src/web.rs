@@ -11,6 +11,8 @@ static ICON: &[u8] = include_bytes!("../data/icon.png");
 
 #[actix_web::main]
 pub async fn webserv(port: u16) -> std::io::Result<()> {
+    println!("Starting application at localhost:{}", port);
+
     HttpServer::new(|| {
         App::new()
             .wrap(middleware::Compress::default())
