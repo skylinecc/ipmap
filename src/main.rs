@@ -43,7 +43,7 @@ fn main() {
             Arg::with_name("service")
                 .long("service")
                 .short("s")
-                .help("Choose Geolocation API")
+                .help("Choose Geolocation API, if not set it defaults to ipapi")
                 .required(false)
                 .takes_value(true)
                 .value_name("SERVICE")

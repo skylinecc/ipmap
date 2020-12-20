@@ -8,6 +8,10 @@ install:
 	install target/release/ipmap $(DESTDIR)$(prefix)/sbin
 	install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1
 
+uninstall:
+	rm -fv $(prefix)/sbin/ipmap
+	rm -fv $(prefix)/share/man/man1/ipmap.1
+
 deb-gen:
 	rm -rf build-deb/
 

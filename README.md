@@ -37,12 +37,12 @@ Some have more free queries, but are less reliable.
 
 Here are the query limits:
 
-| Service       | Limit                     |
-| ---------     | ------------------------- |
-| ipwhois       | 10,000/month              |
-| freegeoip     | 15,000/hour               |
-| ipapi         | 45/minute                 |
-| ipapico       | 1,000/day (30,000/month)  |
+| Service       | Limit                     | Site          |
+| ---------     | ------------------------- | ------------- |
+| ipwhois       | 10,000/month              | ipwhois.app   |
+| freegeoip     | 15,000/hour               | freegeoip.app |
+| ipapi         | 45/minute                 | ip-api.com    |
+| ipapico       | 1,000/day (30,000/month)  | ipapi.co      |
 
 If no service specified, ipapi will be used, which will limit how many IP is detected per minute.
 
