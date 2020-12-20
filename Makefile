@@ -20,9 +20,7 @@ deb-gen:
 
 	cp -rf ./debian/ ./build-deb/ipmap_0.1.6/
 
-	cd ./build-deb/ipmap_0.1.6/
-
-	debuild -us -uc
+	cd ./build-deb/ipmap_0.1.6/ && 	debuild -us -uc
 
 deb-clean:
 	rm -rf build-deb/
