@@ -86,7 +86,10 @@ fn main() {
     // Run page.html in another thread IF the headless option is not used.
     if !app.is_present("headless") {
         thread::spawn(move || {
-            web::webserv(port);
+            match web::webserv(port) {
+                Ok(_) => println!("Starting application at localhost:{}", port),
+                Err(error) => println!("ERROR starting webserver: {}", error),
+            };
         });
     };
 
