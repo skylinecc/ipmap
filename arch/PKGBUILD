@@ -1,0 +1,26 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# Maintainer: Your Name <youremail@domain.com>
+pkgname='ipmap'
+pkgver='0.1.5'
+pkgrel=1
+pkgdesc="An interactive map that shows connected IP addresses."
+arch=('x86_64')
+url="https://github.com/skylinecc/ipmap"
+license=('GPL')
+depends=('libpcap')
+makedepends=('rust', 'make')
+source=("https://github.com/skylinecc/ipmap/arch/$pkgname-$pkgver.tar.gz")
+
+build() {
+	cd "$pkgname-$pkgver"
+	make
+}
+
+package() {
+	cd "$pkgname-$pkgver"
+	make DESTDIR="$pkgdir" install
+}
