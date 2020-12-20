@@ -5,6 +5,9 @@ use actix_web::{
 };
 
 static MARKER_SHADOW: &[u8] = include_bytes!("../data/marker-shadow.png");
+static MARKER_ICON_2X: &[u8] = include_bytes!("../data/marker-icon-2x.png");
+static MARKER_ICON: &[u8] = include_bytes!("../data/marker-icon.png");
+static ICON: &[u8] = include_bytes!("../data/icon.png");
 
 #[actix_web::main]
 pub async fn webserv(port: u16) -> std::io::Result<()> {
@@ -21,8 +24,12 @@ pub async fn webserv(port: u16) -> std::io::Result<()> {
             .service(license)
             .service(jquery)
             .service(marker_shadow)
+            .service(marker_icon2x)
+            .service(marker_icon)
+            .service(icon)
     })
     .bind(format!("127.0.0.1:{}", port))?
+    .disable_signals()
     .run()
     .await
 }
@@ -75,20 +82,29 @@ fn jquery() -> HttpResponse {
         .body(include_str!("../data/jquery.min.js"))
 }
 
-//#[get("/icon.png")]
-//fn icon() -> StaticResponse {
-//    static_response!("icon")
-//}
+#[get("/icon.png")]
+fn icon() -> HttpResponse {
+    HttpResponse::Ok()
+        .encoding(ContentEncoding::Identity)
+        .header("Content-Type", "image/png")
+        .body(ICON)
+}
 
-//#[get("/images/marker-icon.png")]
-//fn markericon() -> StaticResponse {
-//    static_response!("markericon")
-//}
+#[get("/images/marker-icon.png")]
+fn marker_icon() -> HttpResponse {
+    HttpResponse::Ok()
+        .encoding(ContentEncoding::Identity)
+        .header("Content-Type", "image/png")
+        .body(MARKER_ICON)
+}
 
-//#[get("/images/marker-icon-2x.png")]
-//fn markericon2() -> StaticResponse {
-//    static_response!("markericon2")
-//}
+#[get("/images/marker-icon-2x.png")]
+fn marker_icon2x() -> HttpResponse {
+    HttpResponse::Ok()
+        .encoding(ContentEncoding::Identity)
+        .header("Content-Type", "image/png")
+        .body(MARKER_ICON_2X)
+}
 
 #[get("/images/marker-shadow.png")]
 fn marker_shadow() -> HttpResponse {
