@@ -63,3 +63,16 @@ OPTIONS:
     -s, --service <SERVICE>       Choose Geolocation API [possible values: ipwhois, ipapi, ipapico, freegeoip]
     -w, --write-to-file <PATH>    Set path to write JSON to
 ```
+
+## Creating Debian Packages
+Creating debian packages is fairly easy, as I've created a makefile for it.
+
+Dependencies:
+```
+# apt install build-essential devscripts debhelper libpcap-dev make
+```
+
+Then just type:
+```
+make deb-gen
+```
