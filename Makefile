@@ -6,6 +6,7 @@ all:
 install:
 	setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
 	install target/release/ipmap $(DESTDIR)$(prefix)/sbin
+	install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1
 
 deb-gen:
 	rm -rf build-deb/
