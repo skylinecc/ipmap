@@ -54,7 +54,7 @@ fn main() {
             Arg::with_name("port")
                 .long("port")
                 .short("p")
-                .help("Set webserver port, if not set it defaults to port 700")
+                .help("Set webserver port to launch on, if not set it defaults to port 700")
                 .required(false)
                 .takes_value(true)
                 .value_name("PORT"),
@@ -63,7 +63,7 @@ fn main() {
             Arg::with_name("write-to-file")
                 .long("write-to-file")
                 .short("w")
-                .help("Set path to write JSON to")
+                .help("Set a path to write JSON to")
                 .required(false)
                 .takes_value(true)
                 .value_name("PATH"),
