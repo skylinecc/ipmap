@@ -2,6 +2,7 @@ extern crate etherparse;
 extern crate pcap;
 
 use clap::{crate_version, App, Arg, ArgMatches};
+use serde::{Deserialize, Serialize};
 use once_cell::sync::Lazy;
 use std::{sync::RwLock, thread};
 #[cfg(unix)]
@@ -13,8 +14,9 @@ mod web;
 pub static WRITE_PATH: Lazy<RwLock<String>> =
     once_cell::sync::Lazy::new(|| RwLock::new(String::new()));
 
-pub static IP_MAP: Lazy<RwLock<Vec<[String; 3]>>> =
-    once_cell::sync::Lazy::new(|| RwLock::new(vec![[String::new(), String::new(), String::new()]]));
+pub static IP_MAP: Lazy<RwLock<Vec<IPAddress>>> = once_cell::sync::Lazy::new(|| {
+    RwLock::new(vec![IPAddress::new()])
+});
 
 fn main() {
     #[cfg(unix)]
@@ -77,7 +79,7 @@ fn main() {
 
             println!("Writing JSON output to {}", path);
             path.to_string()
-        },
+        }
         None => String::new(),
     };
 
@@ -91,7 +93,7 @@ fn main() {
                 Err(error) => {
                     eprintln!("ERROR starting webserver: {}", error);
                     std::process::exit(1);
-                },
+                }
             };
         });
     };
@@ -114,4 +116,28 @@ fn port(app: ArgMatches) -> u16 {
         None => 700,
     };
     return port;
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct IPAddress {
+    ip: String,
+    latitude: String,
+    longitude: String,
+    city: String,
+}
+
+impl IPAddress {
+    pub fn new() -> Self {
+        let ip = String::new();
+        let latitude = String::new();
+        let longitude = String::new();
+        let city = String::new();
+
+        IPAddress {
+            ip,
+            latitude,
+            longitude,
+            city,
+        }
+    }
 }

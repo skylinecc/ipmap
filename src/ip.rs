@@ -3,7 +3,7 @@ use etherparse::{InternetSlice, SlicedPacket};
 use ipgeolocate::Locator;
 use pcap::Device;
 use std::collections::HashSet;
-use serde::{Deserialize, Serialize};
+use crate::IPAddress;
 
 use crate::{IP_MAP, WRITE_PATH};
 
@@ -26,7 +26,7 @@ pub fn ipextract(app: ArgMatches) {
         match SlicedPacket::from_ethernet(packet.data) {
             Err(error) => {
                 eprintln!("{}", &error.to_string());
-            },
+            }
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
                     let current_ip = header.source_addr();
@@ -36,23 +36,29 @@ pub fn ipextract(app: ArgMatches) {
                         if app.value_of("service") == Some("ipwhois") {
                             // Run locator with the IP address, which returns Latitude and Longitude.
                             match Locator::ipwhois(current_ip.to_string().as_str()) {
-                                Ok(ip) => {
-                                    if !latitude_index.contains(&ip.longitude.to_string()) {
-                                        if !longitude_index.contains(&ip.longitude.to_string()) {
-                                            IP_MAP.write().unwrap().push([
-                                                ip.ip.clone(),
-                                                ip.latitude.to_string().clone(),
-                                                ip.longitude.to_string().clone(),
-                                            ]);
+                                Ok(ipgeo) => {
+                                    if !latitude_index.contains(&ipgeo.longitude.to_string()) {
+                                        if !longitude_index.contains(&ipgeo.longitude.to_string()) {
+                                            let ip = ipgeo.ip.clone();
+                                            let latitude = ipgeo.latitude.clone();
+                                            let longitude = ipgeo.longitude.clone();
+                                            let city = ipgeo.city.clone();
+
+                                            IP_MAP.write().unwrap().push(IPAddress {
+                                                ip,
+                                                latitude,
+                                                longitude,
+                                                city,
+                                            });
 
                                             if app.is_present("write-to-file") {
                                                 write_ip();
                                             }
 
-                                            println!("{} ({})", ip.ip, ip.city);
-                                            longitude_index.insert(ip.longitude.to_string());
+                                            println!("{} ({})", ipgeo.ip, ipgeo.city);
+                                            longitude_index.insert(ipgeo.longitude.to_string());
                                         }
-                                        latitude_index.insert(ip.latitude.to_string());
+                                        latitude_index.insert(ipgeo.latitude.to_string());
                                     }
                                 }
                                 // If there was an error, send it to the logs.
@@ -67,23 +73,29 @@ pub fn ipextract(app: ArgMatches) {
                         } else if app.value_of("service") == Some("freegeoip") {
                             // Run locator with the IP address, which returns Latitude and Longitude.
                             match Locator::freegeoip(current_ip.to_string().as_str()) {
-                                Ok(ip) => {
-                                    if !latitude_index.contains(&ip.longitude.to_string()) {
-                                        if !longitude_index.contains(&ip.longitude.to_string()) {
-                                            IP_MAP.write().unwrap().push([
-                                                ip.ip.clone(),
-                                                ip.latitude.to_string().clone(),
-                                                ip.longitude.to_string().clone(),
-                                            ]);
+                                Ok(ipgeo) => {
+                                    if !latitude_index.contains(&ipgeo.longitude.to_string()) {
+                                        if !longitude_index.contains(&ipgeo.longitude.to_string()) {
+                                            let ip = ipgeo.ip.clone();
+                                            let latitude = ipgeo.latitude.clone();
+                                            let longitude = ipgeo.longitude.clone();
+                                            let city = ipgeo.city.clone();
+
+                                            IP_MAP.write().unwrap().push(IPAddress {
+                                                ip,
+                                                latitude,
+                                                longitude,
+                                                city,
+                                            });
 
                                             if app.is_present("write-to-file") {
                                                 write_ip();
                                             }
 
-                                            println!("{} ({})", ip.ip, ip.city);
-                                            longitude_index.insert(ip.longitude.to_string());
+                                            println!("{} ({})", ipgeo.ip, ipgeo.city);
+                                            longitude_index.insert(ipgeo.longitude.to_string());
                                         }
-                                        latitude_index.insert(ip.latitude.to_string());
+                                        latitude_index.insert(ipgeo.latitude.to_string());
                                     }
                                 }
                                 // If there was an error, send it to the logs.
@@ -98,23 +110,29 @@ pub fn ipextract(app: ArgMatches) {
                         } else if app.value_of("service") == Some("ipapi") {
                             // Run locator with the IP address, which returns Latitude and Longitude.
                             match Locator::ipapi(current_ip.to_string().as_str()) {
-                                Ok(ip) => {
-                                    if !latitude_index.contains(&ip.longitude.to_string()) {
-                                        if !longitude_index.contains(&ip.longitude.to_string()) {
-                                            IP_MAP.write().unwrap().push([
-                                                ip.ip.clone(),
-                                                ip.latitude.to_string().clone(),
-                                                ip.longitude.to_string().clone(),
-                                            ]);
+                                Ok(ipgeo) => {
+                                    if !latitude_index.contains(&ipgeo.longitude.to_string()) {
+                                        if !longitude_index.contains(&ipgeo.longitude.to_string()) {
+                                            let ip = ipgeo.ip.clone();
+                                            let latitude = ipgeo.latitude.clone();
+                                            let longitude = ipgeo.longitude.clone();
+                                            let city = ipgeo.city.clone();
+
+                                            IP_MAP.write().unwrap().push(IPAddress {
+                                                ip,
+                                                latitude,
+                                                longitude,
+                                                city,
+                                            });
 
                                             if app.is_present("write-to-file") {
                                                 write_ip();
                                             }
 
-                                            println!("{} ({})", ip.ip, ip.city);
-                                            longitude_index.insert(ip.longitude.to_string());
+                                            println!("{} ({})", ipgeo.ip, ipgeo.city);
+                                            longitude_index.insert(ipgeo.longitude.to_string());
                                         }
-                                        latitude_index.insert(ip.latitude.to_string());
+                                        latitude_index.insert(ipgeo.latitude.to_string());
                                     }
                                 }
                                 // If there was an error, send it to the logs.
@@ -129,23 +147,29 @@ pub fn ipextract(app: ArgMatches) {
                         } else if app.value_of("service") == Some("ipapico") {
                             // Run locator with the IP address, which returns Latitude and Longitude.
                             match Locator::ipapico(current_ip.to_string().as_str()) {
-                                Ok(ip) => {
-                                    if !latitude_index.contains(&ip.longitude.to_string()) {
-                                        if !longitude_index.contains(&ip.longitude.to_string()) {
-                                            IP_MAP.write().unwrap().push([
-                                                ip.ip.clone(),
-                                                ip.latitude.to_string().clone(),
-                                                ip.longitude.to_string().clone(),
-                                            ]);
+                                Ok(ipgeo) => {
+                                    if !latitude_index.contains(&ipgeo.longitude.to_string()) {
+                                        if !longitude_index.contains(&ipgeo.longitude.to_string()) {
+                                            let ip = ipgeo.ip.clone();
+                                            let latitude = ipgeo.latitude.clone();
+                                            let longitude = ipgeo.longitude.clone();
+                                            let city = ipgeo.city.clone();
+
+                                            IP_MAP.write().unwrap().push(IPAddress {
+                                                ip,
+                                                latitude,
+                                                longitude,
+                                                city,
+                                            });
 
                                             if app.is_present("write-to-file") {
                                                 write_ip();
                                             }
 
-                                            println!("{} ({})", ip.ip, ip.city);
-                                            longitude_index.insert(ip.longitude.to_string());
+                                            println!("{} ({})", ipgeo.ip, ipgeo.city);
+                                            longitude_index.insert(ipgeo.longitude.to_string());
                                         }
-                                        latitude_index.insert(ip.latitude.to_string());
+                                        latitude_index.insert(ipgeo.latitude.to_string());
                                     }
                                 }
                                 // If there was an error, send it to the logs.
@@ -160,23 +184,29 @@ pub fn ipextract(app: ArgMatches) {
                         } else {
                             // Run locator with the IP address, which returns Latitude and Longitude.
                             match Locator::ipapi(current_ip.to_string().as_str()) {
-                                Ok(ip) => {
-                                    if !latitude_index.contains(&ip.longitude.to_string()) {
-                                        if !longitude_index.contains(&ip.longitude.to_string()) {
-                                            IP_MAP.write().unwrap().push([
-                                                ip.ip.clone(),
-                                                ip.latitude.to_string().clone(),
-                                                ip.longitude.to_string().clone(),
-                                            ]);
+                                Ok(ipgeo) => {
+                                    if !latitude_index.contains(&ipgeo.longitude.to_string()) {
+                                        if !longitude_index.contains(&ipgeo.longitude.to_string()) {
+                                            let ip = ipgeo.ip.clone();
+                                            let latitude = ipgeo.latitude.clone();
+                                            let longitude = ipgeo.longitude.clone();
+                                            let city = ipgeo.city.clone();
+
+                                            IP_MAP.write().unwrap().push(IPAddress {
+                                                ip,
+                                                latitude,
+                                                longitude,
+                                                city,
+                                            });
 
                                             if app.is_present("write-to-file") {
                                                 write_ip();
                                             }
 
-                                            println!("{} ({})", ip.ip, ip.city);
-                                            longitude_index.insert(ip.longitude.to_string());
+                                            println!("{} ({})", ipgeo.ip, ipgeo.city);
+                                            longitude_index.insert(ipgeo.longitude.to_string());
                                         }
-                                        latitude_index.insert(ip.latitude.to_string());
+                                        latitude_index.insert(ipgeo.latitude.to_string());
                                     }
                                 }
                                 // If there was an error, send it to the logs.
@@ -232,7 +262,7 @@ fn user_select_device() -> Device {
     devices.remove(n)
 }
 
-pub fn create_ip_json(address: IPAddress) -> String {
+pub fn create_ip_json(address: &IPAddress) -> String {
     let serialized = match serde_json::to_string(&address) {
         Ok(data) => data,
         Err(error) => {
@@ -253,13 +283,6 @@ fn write_ip() {
     fstream::write_text(path, json, true).unwrap();
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct IPAddress {
-    ip: String,
-    latitude: String,
-    longitude: String,
-}
-
 pub fn get_document() -> String {
     let mut json: String = String::new();
 
@@ -269,13 +292,7 @@ pub fn get_document() -> String {
 
     let iter = v[1..].iter();
 
-    for a in iter {
-        let address = IPAddress {
-            ip: a[0].to_owned(),
-            latitude: a[1].to_owned(),
-            longitude: a[2].to_owned(),
-        };
-
+    for address in iter {
         let serialized = create_ip_json(address);
 
         json.push_str(&format!("{},\n", serialized));
