@@ -19,13 +19,15 @@ deb-gen:
 
 	tar -xvf ./build-deb/ipmap_0.1.6.orig.tar.gz -C ./build-deb/ipmap_0.1.6/
 
-	cp -rf ./debian/ ./build-deb/ipmap_0.1.6/
+	cp -rf ./packaging/debian/ ./build-deb/ipmap_0.1.6/
 
 	cd ./build-deb/ipmap_0.1.6/ && 	debuild -us -uc
 
 arch-gen: 
 	rm -rf build-arch/
+
 	mkdir build-arch/
+
 	tar -czvf ./build-arch/ipmap-0.1.6.tar.gz data/ src/ Cargo.toml LICENSE README.md Makefile
 
 deb-clean:
