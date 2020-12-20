@@ -26,7 +26,7 @@ deb-gen:
 arch-gen: 
 	rm -rf build-arch/
 	mkdir build-arch/
-	tar -czvf ./build-arch/ipmap-0.1.5.tar.gz data/ src/ Cargo.toml LICENSE README.md Makefile
+	tar -czvf ./build-arch/ipmap-0.1.6.tar.gz data/ src/ Cargo.toml LICENSE README.md Makefile
 
 deb-clean:
 	rm -rf build-deb/

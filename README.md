@@ -18,13 +18,14 @@ $ cargo build --release
 
 You must have privileges to capture using the pcap API. In order to give the binary the necessary permissions, run:
 ```
-# sudo setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
+# setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
 ```
 
 Finally, execute it.
 ```
 # target/release/ipmap
 ```
+*Note: "#" means run as root. This means either through the root user or sudo*
 
 **To use it navigate to your web browser and go to `localhost:700`, where the map will appear.**
 

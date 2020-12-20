@@ -5,7 +5,7 @@
 
 # Maintainer: Your Name <youremail@domain.com>
 pkgname='ipmap'
-pkgver='0.1.5'
+pkgver='0.1.6'
 pkgrel=1
 pkgdesc="An interactive map that shows connected IP addresses."
 arch=('x86_64')
