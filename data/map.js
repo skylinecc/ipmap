@@ -19,7 +19,7 @@ function addMarkers(jsonText) {
 
 		document.getElementById("totalIps").innerHTML = jsonText.length + " Unique IP's";
 
-		L.marker([obj.latitude, obj.longitude]).addTo(ipmap)
+		L.marker([obj.latitude, obj.longitude]).addTo(ipmap).bindPopup("<b>" + obj.ip + "</b> - " + obj.city)
 // .bindpopup(obj.ip);
 		alreadyAdded.add(obj.ip);
 	}
