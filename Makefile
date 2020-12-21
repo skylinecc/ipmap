@@ -5,7 +5,7 @@ all:
 	cargo build --release
 
 install:
-	ls target/
+	ls
 	sudo setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
 	install target/release/ipmap $(DESTDIR)$(prefix)/sbin
 	install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1
