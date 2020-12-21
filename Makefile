@@ -10,6 +10,7 @@ install:
 	install target/release/ipmap $(DESTDIR)$(prefix)/sbin
 	install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1
 
+
 uninstall:
 	rm -fv $(prefix)/sbin/ipmap
 	rm -fv $(prefix)/share/man/man1/ipmap.1
@@ -30,9 +31,11 @@ deb-gen:
 	cd ./build-deb/ipmap_$(version)/ && 	debuild -us -uc
 
 arch-gen: 
-
-	tar -czf ./packaging/arch/ipmap-$(version).tar.gz data/ src/ Cargo.toml LICENSE README.md Makefile ./packaging/arch/PKGBUILD
-
+	cargo build --release
+	
+	tar -czf ./packaging/arch/ipmap-$(version).tar.gz data/ LICENSE README.md Makefile ./target/release/ipmap
+		
+	cargo clean
 
 build-clean:
 	rm -rf build-*
