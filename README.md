@@ -13,7 +13,7 @@ Windows is possible, but [WinPcap](https://github.com/ebfull/pcap#windows) is re
 Ipmap has a package on the AUR:
 https://aur.archlinux.org/packages/ipmap/
 
-## Debian-Based Distros
+### Debian-Based Distros
 
 ## Building
 Because this program is written in rust, you must have rust [installed](https://www.rust-lang.org/tools/install).
