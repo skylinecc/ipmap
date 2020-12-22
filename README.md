@@ -3,10 +3,6 @@
 <p align="center">An interactive map that shows connected IP addresses.</p>
 <p align="center"><img src=data/screenshot.png></p>
 
-## Requirements 
-ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (Linux, MacOS, *BSD).
-
-Windows is possible, but [WinPcap](https://github.com/ebfull/pcap#windows) is required before build time.
 ## Installing 
 
 ### Arch-Based Distros
@@ -14,23 +10,27 @@ Ipmap has a package on the AUR:
 https://aur.archlinux.org/packages/ipmap/
 
 ### Debian-Based Distros
+Ipmap has .deb packages on the release pages:
+https://github.com/skylinecc/ipmap/releases
 
-## Building
+## Building From Scratch
+
+### Requirements 
+ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (Linux, MacOS, *BSD).
+
+Windows is possible, but [WinPcap](https://github.com/ebfull/pcap#windows) is required before build time.
+
 Because this program is written in rust, you must have rust [installed](https://www.rust-lang.org/tools/install).
 
+### Compiling
 First, build it:
 ```
-$ cargo build --release
+$ make
 ```
 
-You must have privileges to capture using the pcap API. In order to give the binary the necessary permissions, run:
+Then, you can install it.
 ```
-# setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
-```
-
-Finally, execute it.
-```
-# target/release/ipmap
+# make install
 ```
 *Note: "#" means run as root. This means either through the root user or sudo*
 
@@ -77,7 +77,7 @@ Creating debian packages is fairly easy, as I've created a makefile for it.
 
 Dependencies:
 ```
-# apt install build-essential devscripts debhelper libpcap-dev make
+# apt install build-essential devscripts debhelper libpcap-dev
 ```
 
 Then just type:
