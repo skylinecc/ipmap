@@ -7,6 +7,13 @@
 ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (Linux, MacOS, *BSD).
 
 Windows is possible, but [WinPcap](https://github.com/ebfull/pcap#windows) is required before build time.
+## Installing 
+
+### Arch-Based Distros
+Ipmap has a package on the AUR:
+https://aur.archlinux.org/packages/ipmap/
+
+### Debian-Based Distros
 
 ## Building
 Because this program is written in rust, you must have rust [installed](https://www.rust-lang.org/tools/install).
