@@ -5,10 +5,9 @@ all:
 	cargo build --release
 
 install:
-	ls
 	sudo setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
-	install target/release/ipmap $(DESTDIR)$(prefix)/sbin
-	install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1
+	sudo install target/release/ipmap $(DESTDIR)$(prefix)/sbin
+	sudo install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1
 
 
 uninstall:
@@ -32,7 +31,7 @@ deb-gen:
 
 arch-gen: 
 	cargo build --release
-	
+
 	tar -czf ./packaging/arch/ipmap-$(version).tar.gz data/ LICENSE README.md Makefile ./target/release/ipmap
 		
 	cargo clean
