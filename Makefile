@@ -5,16 +5,9 @@ all:
 	cargo build --release
 
 install:
-<<<<<<< HEAD
-	setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
-	install target/release/ipmap $(DESTDIR)$(prefix)/sbin/
-	install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1/
-=======
 	sudo setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
 	sudo install target/release/ipmap $(DESTDIR)$(prefix)/sbin/
 	sudo install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1/
-
->>>>>>> 3922b292b326c8ba2aa3a2f726a03cbba5251f46
 
 uninstall:
 	rm -fv $(prefix)/sbin/ipmap
