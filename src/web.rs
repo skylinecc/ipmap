@@ -1,4 +1,8 @@
+extern crate web_view;
+
 use crate::ip::get_document;
+use web_view::*;
+use std::thread;
 
 use actix_web::{
     dev::BodyEncoding, get, http::ContentEncoding, middleware, App, HttpResponse, HttpServer,
@@ -9,6 +13,10 @@ static ICON: &[u8] = include_bytes!("../data/icon.png");
 #[actix_web::main]
 pub async fn webserv(port: u16) -> std::io::Result<()> {
     println!("Starting application at localhost:{}", port);
+
+    thread::spawn(move || {
+        web_ui(port.clone());
+    });
 
     HttpServer::new(|| {
         App::new()
@@ -63,4 +71,19 @@ fn json() -> HttpResponse {
         // v- disable compression
         .encoding(ContentEncoding::Identity)
         .body(get_document())
+}
+
+fn web_ui(port: u16) {
+    web_view::builder()
+        .title("Ipmap")
+        .content(Content::Url(&format!("http://127.0.0.1:{}", port)))
+        .size(800, 600)
+        .resizable(true)
+        .debug(false)
+        .user_data(())
+        .invoke_handler(|_webview, _arg| Ok(()))
+        .run()
+        .unwrap();
+    println!("UI closed, exiting now.");
+    std::process::exit(0)
 }

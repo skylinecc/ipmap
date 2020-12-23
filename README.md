@@ -18,6 +18,8 @@ https://github.com/skylinecc/ipmap/releases
 ### Requirements 
 ipmap uses `libpcap-dev`, which is only easily available on UNIX-like systems (Linux, MacOS, *BSD).
 
+On **Linux**, you *must* have `libwebkit2gtk-4.0-dev` to build and run.
+
 Windows is possible, but [WinPcap](https://github.com/ebfull/pcap#windows) is required before build time.
 
 Because this program is written in rust, you must have rust [installed](https://www.rust-lang.org/tools/install).

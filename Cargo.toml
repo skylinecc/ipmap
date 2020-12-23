@@ -1,6 +1,6 @@
 [package]
 name = "ipmap"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["Aditya Suresh <ethanaditya@gmail.com>", "Grant H. <grantshandy@gmail.com>", "Nick Z. <nicholasz2510@gmail.com>", "sigmaSd"]
 edition = "2018"
 license = "GPL-3.0"
@@ -21,6 +21,7 @@ ipgeolocate = "0.2.7"
 once_cell = "1.5.2"
 serde = "1.0.117"
 fstream = "0.1.2"
+web-view = "0.7.2"
 
 [target.'cfg(unix)'.dependencies]
 users = "0.11.0"
