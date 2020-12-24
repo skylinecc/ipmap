@@ -27,6 +27,7 @@ fn main() {
             std::process::exit(5);
         }
     }
+    
     // Initialize cli app
     let app = ipmap::init_app().get_matches();
 
