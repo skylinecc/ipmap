@@ -1,17 +1,19 @@
 prefix = /usr/local
-version = 0.1.6
+version = 0.1.7
 
 all:
-	cargo build --release
+	$(HOME)/.cargo/bin/cargo build --release
 
 install:
 	sudo setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
-	sudo install target/release/ipmap $(DESTDIR)$(prefix)/bin/
-	sudo install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1
+	sudo install target/release/ipmap $(DESTDIR)$(prefix)/sbin/
+	sudo install data/ipmap.1 $(DESTDIR)$(prefix)/share/man/man1/
+	sudo install data/ipmap.desktop $(DESTDIR)/usr/share/applications/
 
 uninstall:
-	rm -fv $(prefix)/sbin/ipmap
-	rm -fv $(prefix)/share/man/man1/ipmap.1
+	rm -fv $(DESTDIR)$(prefix)/sbin/ipmap
+	rm -fv $(DESTDIR)$(prefix)/share/man/man1/ipmap.1
+	rm -fv $(DESTDIR)$(prefix)/usr/share/applications/ipmap.desktop
 
 deb-gen:
 	rm -rf build-deb/
@@ -39,4 +41,4 @@ build-clean:
 	rm -rf build-*
 
 clean:
-	cargo clean
+	$(HOME)/.cargo/bin/cargo clean

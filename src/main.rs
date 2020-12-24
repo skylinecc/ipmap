@@ -1,16 +1,16 @@
 extern crate etherparse;
 extern crate pcap;
 
-use clap::{crate_version, App, Arg, ArgMatches};
+use clap::{ArgMatches};
 use serde::{Deserialize, Serialize};
 use once_cell::sync::Lazy;
 use std::{sync::RwLock, thread};
+
 #[cfg(unix)]
 use users::{get_current_uid, get_user_by_uid};
 
 mod ip;
 mod web;
-
 pub static WRITE_PATH: Lazy<RwLock<String>> =
     once_cell::sync::Lazy::new(|| RwLock::new(String::new()));
 
@@ -27,51 +27,10 @@ fn main() {
             std::process::exit(5);
         }
     }
+    // Initialize cli app
+    let app = ipmap::init_app().get_matches();
 
     // Set application details
-    let app = App::new("ipmap")
-        .version(crate_version!())
-        .author("Skyline High Coding Club Authors")
-        .arg(
-            Arg::with_name("headless")
-                .long("headless")
-                .help("Launches the program without running the webserver")
-                .required(false)
-                .takes_value(false),
-        )
-        .arg(
-            Arg::with_name("service")
-                .long("service")
-                .short("s")
-                .help("Choose Geolocation API, if not set it defaults to ipapi")
-                .required(false)
-                .takes_value(true)
-                .value_name("SERVICE")
-                .possible_value("ipwhois")
-                .possible_value("ipapi")
-                .possible_value("ipapico")
-                .possible_value("freegeoip"),
-        )
-        .arg(
-            Arg::with_name("port")
-                .long("port")
-                .short("p")
-                .help("Set webserver port to launch on, if not set it defaults to port 700")
-                .required(false)
-                .takes_value(true)
-                .value_name("PORT"),
-        )
-        .arg(
-            Arg::with_name("write-to-file")
-                .long("write-to-file")
-                .short("w")
-                .help("Set a path to write JSON to")
-                .required(false)
-                .takes_value(true)
-                .value_name("PATH"),
-        )
-        .get_matches();
-
     match app.value_of("write-to-file") {
         Some(path) => {
             WRITE_PATH.write().unwrap().clear();
@@ -128,16 +87,11 @@ pub struct IPAddress {
 
 impl IPAddress {
     pub fn new() -> Self {
-        let ip = String::new();
-        let latitude = String::new();
-        let longitude = String::new();
-        let city = String::new();
-
         IPAddress {
-            ip,
-            latitude,
-            longitude,
-            city,
+            ip: String::new(),
+            latitude: String::new(),
+            longitude: String::new(),
+            city: String::new(),
         }
     }
 }
