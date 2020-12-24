@@ -14,7 +14,7 @@ mod web;
 pub static WRITE_PATH: Lazy<RwLock<String>> =
     once_cell::sync::Lazy::new(|| RwLock::new(String::new()));
 
-pub static IP_INDEX: Lazy<RwLock<Vec<IPAddress>>> = once_cell::sync::Lazy::new(|| {
+pub static IP_MAP: Lazy<RwLock<Vec<IPAddress>>> = once_cell::sync::Lazy::new(|| {
     RwLock::new(vec![IPAddress::new()])
 });
 
