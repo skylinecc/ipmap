@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=System Profiler and Benchmark
+Exec=pkexec /usr/local/sbin/ipmap
+Icon=/home/grant/Projects/ipmap/data/icon.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=System;Network;
+Keywords=ip;network;ipmap;
+Name[en_US.UTF-8]=ipmap
+Comment=An interactive map that shows connected IP addresses.
