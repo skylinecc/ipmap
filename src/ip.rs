@@ -25,20 +25,21 @@ pub fn ipextract(app: ArgMatches) {
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
                     let current_ip = header.source_addr();
-
-                    let mut write: bool = false;
-
-                    if app.is_present("write-to-file") {
-                        write = true;
-                    };
-
                     let service = match app.value_of("service") {
                         Some(service) => service,
-                        None => "ipapi",
+                        None => {
+                            "ipapi"
+                        },
                     };
-                    if !current_ip.is_private() {
-                        handle_ip(service, &current_ip.to_string(), write);
+                    
+                    let v = (&*IP_INDEX.read().unwrap()).iter().any(|ip| ip.ip == current_ip.to_string());
+
+                    if !current_ip.is_private() && !v{
+                        handle_ip(service, &current_ip.to_string(), app.is_present("write-to-file"));
+                    } else {
+                        println!("Found redundant or private ip, {}", current_ip.to_string());
                     }
+                    
                 }
                 Some(_) | None => (),
             },
@@ -59,7 +60,7 @@ fn handle_ip(service: &str, current_ip: &str, write: bool) {
             {
                 let v = &mut *IP_INDEX.write().unwrap();
                 if !v.contains(&curip) {
-                    println!("Adding ip {} to list", ipgeo.ip.clone());
+                    println!("Adding {} ({}, {}, {})", ipgeo.ip.clone(), ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
                     v.push(curip);
                 }
             }
@@ -68,10 +69,9 @@ fn handle_ip(service: &str, current_ip: &str, write: bool) {
             };
         }
         Err(error) => {
-            eprintln!("ipwhois error: {} ({})", current_ip.to_string(), error);
+            eprintln!("{} error: {} ({})", service, current_ip.to_string(), error);
         }
     }
-    // }
 }
 
 #[cfg(windows)]
@@ -124,9 +124,7 @@ pub fn create_ip_json(address: &IPAddress) -> String {
 
 fn write_ip() {
     let path: String = WRITE_PATH.read().unwrap().clone();
-
     let json: String = get_document();
-
     fstream::write_text(path, json, true).unwrap();
 }
 
