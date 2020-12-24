@@ -35,9 +35,11 @@ pub fn ipextract(app: ArgMatches) {
                     let v = (&*IP_INDEX.read().unwrap()).iter().any(|ip| ip.ip == current_ip.to_string());
 
                     if !current_ip.is_private() && !v{
-                        handle_ip(service, &current_ip.to_string(), app.is_present("write-to-file"));
+                        handle_ip(service, &current_ip.to_string(), app.is_present("write-to-file"), app.is_present("verbose"));
                     } else {
-                        println!("Found redundant or private ip, {}", current_ip.to_string());
+                        if app.is_present("verbose") {
+                            println!("Found redundant or private ip, {}", current_ip.to_string());
+                        }
                     }
                     
                 }
@@ -47,7 +49,7 @@ pub fn ipextract(app: ArgMatches) {
     }
 }
 
-fn handle_ip(service: &str, current_ip: &str, write: bool) {
+fn handle_ip(service: &str, current_ip: &str, write: bool, verbose: bool) {
     
     match Locator::get(current_ip, service) {
         Ok(ipgeo) => {
@@ -60,11 +62,18 @@ fn handle_ip(service: &str, current_ip: &str, write: bool) {
             {
                 let v = &mut *IP_INDEX.write().unwrap();
                 if !v.contains(&curip) {
-                    println!("Adding {} ({}, {}, {})", ipgeo.ip.clone(), ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
+                    if verbose {
+                        println!("Adding {} - {} ({}, {}, {})", service.clone(), ipgeo.ip.clone(), ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
+                    } else {
+                        println!("{} - ({})", ipgeo.ip.clone(), ipgeo.city.clone());
+                    }
                     v.push(curip);
                 }
             }
             if write {
+                if verbose {
+                    println!("Writing to JSON to file");
+                };
                 write_ip();
             };
         }
@@ -78,7 +87,7 @@ fn handle_ip(service: &str, current_ip: &str, write: bool) {
 fn user_select_device() -> Device {
     let mut devices = Device::list().unwrap();
     if devices.is_empty() {
-        eprintln!("Found no device to listen on, maybe you need to run as an Adminstrator");
+        eprintln!("Found no device to listen on, maybe you need to run as an Administrator");
         std::process::exit(1);
     }
     println!("Select which device to listen on: (choose the number of the item)");

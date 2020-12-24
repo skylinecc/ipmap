@@ -9,7 +9,15 @@ pub fn init_app () -> App<'static, 'static> {
                 .long("headless")
                 .help("Launches the program without running the webserver")
                 .required(false)
-                .takes_value(false),
+                .takes_value(false)
+        )
+        .arg(
+            Arg::with_name("verbose")
+                .long("verbose")
+                .short("v")
+                .help("Run the program with verbose logging")
+                .required(false)
+                .takes_value(false)
         )
         .arg(
             Arg::with_name("service")
@@ -22,7 +30,7 @@ pub fn init_app () -> App<'static, 'static> {
                 .possible_value("ipwhois")
                 .possible_value("ipapi")
                 .possible_value("ipapico")
-                .possible_value("freegeoip"),
+                .possible_value("freegeoip")
         )
         .arg(
             Arg::with_name("port")
@@ -31,7 +39,7 @@ pub fn init_app () -> App<'static, 'static> {
                 .help("Set webserver port to launch on, if not set it defaults to port 700")
                 .required(false)
                 .takes_value(true)
-                .value_name("PORT"),
+                .value_name("PORT")
         )
         .arg(
             Arg::with_name("write-to-file")
@@ -40,6 +48,6 @@ pub fn init_app () -> App<'static, 'static> {
                 .help("Set a path to write JSON to")
                 .required(false)
                 .takes_value(true)
-                .value_name("PATH"),
+                .value_name("PATH")
         )
 }
