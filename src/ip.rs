@@ -2,6 +2,7 @@ use clap::ArgMatches;
 use etherparse::{InternetSlice, SlicedPacket};
 use ipgeolocate::Locator;
 use pcap::Device;
+use std::collections::HashSet;
 use crate::IPAddress;
 
 use crate::{IP_INDEX, WRITE_PATH};
@@ -54,14 +55,14 @@ fn handle_ip(service: &str, current_ip: &str, write: bool) {
     let v = &*IP_INDEX.read().unwrap();
     let iter = v[1..].iter();
 
-    let mut ip_vec: Vec<String> = Vec::new();
-    let mut latitude_vec: Vec<String> = Vec::new();
-    let mut longitude_vec: Vec<String> = Vec::new();
+    let mut ip_vec: HashSet<String> = HashSet::new();
+    let mut latitude_vec: HashSet<String> = HashSet::new();
+    let mut longitude_vec: HashSet<String> = HashSet::new();
 
     for address in iter {
-        latitude_vec.push(address.latitude.clone());
-        longitude_vec.push(address.longitude.clone());
-        ip_vec.push(address.ip.clone());
+        latitude_vec.insert(address.latitude.clone());
+        longitude_vec.insert(address.longitude.clone());
+        ip_vec.insert(address.ip.clone());
     }
 
     if !ip_vec.contains(&current_ip.to_string()) {
@@ -72,6 +73,7 @@ fn handle_ip(service: &str, current_ip: &str, write: bool) {
                 if !latitude_vec.contains(&ipgeo.latitude.clone()) {
                     if !longitude_vec.contains(&ipgeo.longitude.clone()) {
                         println!("found unique location!");
+                        println!("{} ({})", ipgeo.ip.clone(), ipgeo.city.clone());
                         IP_INDEX.write().unwrap().push(IPAddress {
                             ip: ipgeo.ip.clone(),
                             latitude: ipgeo.latitude.clone(),
@@ -82,8 +84,6 @@ fn handle_ip(service: &str, current_ip: &str, write: bool) {
                         if write {
                             write_ip();
                         };
-
-                        println!("{} ({})", ipgeo.ip, ipgeo.city);
                     }
                 }
             }
