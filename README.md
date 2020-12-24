@@ -57,7 +57,7 @@ If no service specified, ipapi will be used, which will limit how many IP is det
 
 ## Command Line Options
 ```
-ipmap 0.1.6
+ipmap 0.1.7
 Skyline High Coding Club Authors
 
 USAGE:
