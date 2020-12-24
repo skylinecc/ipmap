@@ -77,13 +77,14 @@ fn port(app: ArgMatches) -> u16 {
     return port;
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct IPAddress {
     ip: String,
     latitude: String,
     longitude: String,
     city: String,
 }
+
 
 impl IPAddress {
     pub fn new() -> Self {

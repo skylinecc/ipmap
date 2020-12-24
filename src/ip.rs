@@ -1,9 +1,9 @@
+use crate::IPAddress;
 use clap::ArgMatches;
 use etherparse::{InternetSlice, SlicedPacket};
 use ipgeolocate::Locator;
 use pcap::Device;
 use std::collections::HashSet;
-use crate::IPAddress;
 
 use crate::{IP_INDEX, WRITE_PATH};
 
@@ -27,8 +27,6 @@ pub fn ipextract(app: ArgMatches) {
                 Some(InternetSlice::Ipv4(header)) => {
                     let current_ip = header.source_addr();
 
-                    println!("found an ip!");
-
                     let mut write: bool = false;
 
                     if app.is_present("write-to-file") {
@@ -39,8 +37,10 @@ pub fn ipextract(app: ArgMatches) {
                         Some(service) => service,
                         None => "ipapi",
                     };
-
-                    handle_ip(service, &current_ip.to_string(), write);
+                    if !current_ip.is_private() {
+                        println!("Captured packet with {}", &current_ip.to_string());
+                        handle_ip(service, &current_ip.to_string(), write);
+                    }
                 }
                 Some(_) | None => (),
             },
@@ -49,54 +49,60 @@ pub fn ipextract(app: ArgMatches) {
 }
 
 fn handle_ip(service: &str, current_ip: &str, write: bool) {
+    //println!("running handle_ip()");
 
-    println!("running handle_ip()");
+     //let v = &*IP_INDEX.read().unwrap();
 
-    let v = &*IP_INDEX.read().unwrap();
-    let iter = v[1..].iter();
+    // let iter = v[1..].iter();
 
-    let mut ip_vec: HashSet<String> = HashSet::new();
-    let mut latitude_vec: HashSet<String> = HashSet::new();
-    let mut longitude_vec: HashSet<String> = HashSet::new();
+    // let mut ip_vec: HashSet<String> = HashSet::new();
+    // let mut latitude_vec: HashSet<String> = HashSet::new();
+    // let mut longitude_vec: HashSet<String> = HashSet::new();
 
-    for address in iter {
-        latitude_vec.insert(address.latitude.clone());
-        longitude_vec.insert(address.longitude.clone());
-        ip_vec.insert(address.ip.clone());
-    }
+    // for address in iter {
+    //     latitude_vec.insert(address.latitude.clone());
+    //     longitude_vec.insert(address.longitude.clone());
+    //     ip_vec.insert(address.ip.clone());
+    // }
 
-    if !ip_vec.contains(&current_ip.to_string()) {
-        println!("found unique ip!");
-        // Run locator with the IP address, which returns Latitude and Longitude.
-        match Locator::get(current_ip, service) {
-            Ok(ipgeo) => {
-                if !latitude_vec.contains(&ipgeo.latitude.clone()) {
-                    if !longitude_vec.contains(&ipgeo.longitude.clone()) {
-                        println!("found unique location!");
-                        println!("{} ({})", ipgeo.ip.clone(), ipgeo.city.clone());
-                        IP_INDEX.write().unwrap().push(IPAddress {
-                            ip: ipgeo.ip.clone(),
-                            latitude: ipgeo.latitude.clone(),
-                            longitude: ipgeo.longitude.clone(),
-                            city: ipgeo.city.clone(),
-                        });
-
-                        if write {
-                            write_ip();
-                        };
-                    }
+    //if !ip_vec.contains(&current_ip.to_string()) {
+    //println!("found ip!");
+    // Run locator with the IP address, which returns Latitude and Longitude.
+    match Locator::get(current_ip, service) {
+        Ok(ipgeo) => {
+            
+            //println!("found unique location!");
+            //println!("{} ({})", ipgeo.ip.clone(), ipgeo.city.clone());
+            let curip = IPAddress {
+                ip: ipgeo.ip.clone(),
+                latitude: ipgeo.latitude.clone(),
+                longitude: ipgeo.longitude.clone(),
+                city: ipgeo.city.clone(),
+            };
+            //println!("83");
+            {
+                let v = &mut *IP_INDEX.write().unwrap();
+                if !v.contains(&curip) {
+                    println!("Adding ip {} to list", ipgeo.ip.clone());
+                    v.push(curip);
+                   // println!("89");
+                } else {
+                    //println!("Found duplicate: {:?}", curip);
                 }
             }
-            // If there was an error, send it to the logs.
-            Err(error) => {
-                eprintln!(
-                    "ipwhois error: {} ({})",
-                    current_ip.to_string(),
-                    error
-                );
-            }
+            
+            
+
+            if write {
+                write_ip();
+            };
+            
+        }
+        Err(error) => {
+            eprintln!("ipwhois error: {} ({})", current_ip.to_string(), error);
         }
     }
+    // }
 }
 
 #[cfg(windows)]
