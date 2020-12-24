@@ -32,7 +32,7 @@ pub fn ipextract(app: ArgMatches) {
                         },
                     };
                     
-                    let v = (&*IP_INDEX.read().unwrap()).iter().any(|ip| ip.ip == current_ip.to_string());
+                    let v = (&*IP_INDEX.read().unwrap()).iter().any(|ip| ip.ips.contains(&current_ip.to_string()));
 
                     if !current_ip.is_private() && !v{
                         handle_ip(service, &current_ip.to_string(), app.is_present("write-to-file"), app.is_present("verbose"));
@@ -53,23 +53,43 @@ fn handle_ip(service: &str, current_ip: &str, write: bool, verbose: bool) {
     
     match Locator::get(current_ip, service) {
         Ok(ipgeo) => {
-            let curip = IPAddress {
-                ip: ipgeo.ip.clone(),
-                latitude: ipgeo.latitude.clone(),
-                longitude: ipgeo.longitude.clone(),
-                city: ipgeo.city.clone(),
-            };
-            {
-                let v = &mut *IP_INDEX.write().unwrap();
-                if !v.contains(&curip) {
-                    if verbose {
-                        println!("Adding {} - {} ({}, {}, {})", service.clone(), ipgeo.ip.clone(), ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
-                    } else {
-                        println!("{} - ({})", ipgeo.ip.clone(), ipgeo.city.clone());
+            // let curip = IPAddress {
+            //     ip: ipgeo.ip.clone(),
+            //     latitude: ipgeo.latitude.clone(),
+            //     longitude: ipgeo.longitude.clone(),
+            //     city: ipgeo.city.clone(),
+            // };
+            // {
+            let v = &mut *IP_INDEX.write().unwrap();
+            //     if !v.contains(&curip) {
+            //         if verbose {
+            //             println!("Adding {} - {} ({}, {}, {})", service.clone(), ipgeo.ip.clone(), ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
+            //         } else {
+            //             println!("{} - ({})", ipgeo.ip.clone(), ipgeo.city.clone());
+            //         }
+            //         v.push(curip);
+            //     }
+            // }
+            let m = v.iter_mut().find(|elem| elem.latitude == ipgeo.latitude && elem.longitude == ipgeo.longitude);
+                match m {
+                    Some (matchip) => {
+                        if verbose {
+                            println!("Found duplicate location for {}, adding to internal list", ipgeo.ip);
+                        }
+                        matchip.ips.push(ipgeo.ip);
                     }
-                    v.push(curip);
+                    None => {
+                        if verbose {
+                            println!("Adding {} ({}, {}, {})", ipgeo.ip, ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
+                        }
+                        v.push(IPAddress {
+                            ips: vec![ipgeo.ip],
+                            city: ipgeo.city,
+                            latitude: ipgeo.latitude,
+                            longitude: ipgeo.longitude,
+                        })
+                    }
                 }
-            }
             if write {
                 if verbose {
                     println!("Writing to JSON to file");
