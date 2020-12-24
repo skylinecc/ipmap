@@ -87,16 +87,11 @@ pub struct IPAddress {
 
 impl IPAddress {
     pub fn new() -> Self {
-        let ip = String::new();
-        let latitude = String::new();
-        let longitude = String::new();
-        let city = String::new();
-
         IPAddress {
-            ip,
-            latitude,
-            longitude,
-            city,
+            ip: String::new(),
+            latitude: String::new(),
+            longitude: String::new(),
+            city: String::new(),
         }
     }
 }
