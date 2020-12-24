@@ -80,7 +80,7 @@ fn port(app: ArgMatches) -> u16 {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct IPAddress {
-    ip: String,
+    ips: Vec<String>,
     latitude: String,
     longitude: String,
     city: String,
@@ -90,7 +90,7 @@ pub struct IPAddress {
 impl IPAddress {
     pub fn new() -> Self {
         IPAddress {
-            ip: String::new(),
+            ips: Vec::new(),
             latitude: String::new(),
             longitude: String::new(),
             city: String::new(),
