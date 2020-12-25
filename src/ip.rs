@@ -79,9 +79,7 @@ fn handle_ip(service: &str, current_ip: &str, write: bool, verbose: bool) {
                         matchip.ips.push(ipgeo.ip);
                     }
                     None => {
-                        if verbose {
-                            println!("Adding {} ({}, {}, {})", ipgeo.ip, ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
-                        }
+                        println!("Adding {} ({}, {}, {})", ipgeo.ip, ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
                         v.push(IPAddress {
                             ips: vec![ipgeo.ip],
                             city: ipgeo.city,
