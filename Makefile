@@ -4,6 +4,10 @@ version = 0.1.7
 all:
 	$(HOME)/.cargo/bin/cargo build --release
 
+run:
+	sudo setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
+	sudo target/release/ipmap
+
 install:
 	sudo setcap cap_net_raw,cap_net_admin=eip target/release/ipmap
 	sudo install target/release/ipmap $(DESTDIR)$(prefix)/sbin/
@@ -37,8 +41,6 @@ arch-gen:
 
 	cargo clean
 
-build-clean:
-	rm -rf build-*
-
 clean:
 	$(HOME)/.cargo/bin/cargo clean
+	rm -rf build-*

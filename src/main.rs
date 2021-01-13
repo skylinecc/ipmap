@@ -11,6 +11,7 @@ use users::{get_current_uid, get_user_by_uid};
 
 mod ip;
 mod web;
+
 pub static WRITE_PATH: Lazy<RwLock<String>> =
     once_cell::sync::Lazy::new(|| RwLock::new(String::new()));
 
@@ -49,7 +50,7 @@ fn main() {
     if !app.is_present("headless") {
         thread::spawn(move || {
             match web::webserv(port) {
-                Ok(_) => println!("Finished webserv() successfully"),
+                Ok(_) => println!("web server ended."),
                 Err(error) => {
                     eprintln!("ERROR starting webserver: {}", error);
                     std::process::exit(1);
@@ -80,7 +81,7 @@ fn port(app: ArgMatches) -> u16 {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct IPAddress {
-    ips: Vec<String>,
+    ip: String,
     latitude: String,
     longitude: String,
     city: String,
@@ -90,7 +91,7 @@ pub struct IPAddress {
 impl IPAddress {
     pub fn new() -> Self {
         IPAddress {
-            ips: Vec::new(),
+            ip: String::new(),
             latitude: String::new(),
             longitude: String::new(),
             city: String::new(),

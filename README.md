@@ -1,7 +1,7 @@
 <h1 align="center">ipmap</h1>
 
 <p align="center">An interactive map that shows connected IP addresses.</p>
-<p align="center"><img src=data/screenshot.png></p>
+<p align="center"><img src="https://github.com/skylinecc/ipmap/blob/main/data/screenshot.png"></p>
 
 ## Installing 
 

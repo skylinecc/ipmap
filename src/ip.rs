@@ -3,11 +3,14 @@ use clap::ArgMatches;
 use etherparse::{InternetSlice, SlicedPacket};
 use ipgeolocate::Locator;
 use pcap::Device;
+use std::collections::HashSet;
 
 use crate::{IP_INDEX, WRITE_PATH};
 
 pub fn ipextract(app: ArgMatches) {
     println!("Running IP Detection");
+
+    let mut ip_index: HashSet<String> = HashSet::new();
 
     #[cfg(unix)]
     let cap = Device::lookup().unwrap();
@@ -25,23 +28,14 @@ pub fn ipextract(app: ArgMatches) {
             Ok(value) => match value.ip {
                 Some(InternetSlice::Ipv4(header)) => {
                     let current_ip = header.source_addr();
-                    let service = match app.value_of("service") {
-                        Some(service) => service,
-                        None => {
-                            "ipapi"
-                        },
-                    };
-                    
-                    let v = (&*IP_INDEX.read().unwrap()).iter().any(|ip| ip.ips.contains(&current_ip.to_string()));
+                    if !ip_index.contains(&current_ip.to_string()) && !current_ip.is_private() {
+                        ip_index.insert(current_ip.to_string());
 
-                    if !current_ip.is_private() && !v{
-                        handle_ip(service, &current_ip.to_string(), app.is_present("write-to-file"), app.is_present("verbose"));
-                    } else {
-                        if app.is_present("verbose") {
-                            println!("Found redundant or private ip, {}", current_ip.to_string());
+                        match app.value_of("service") {
+                            Some(service) => handle_ip(&current_ip.to_string().as_str(), app.clone(), service),
+                            None => handle_ip(current_ip.to_string().as_str(), app.clone(), "ipapi"),
                         }
                     }
-                    
                 }
                 Some(_) | None => (),
             },
@@ -49,54 +43,48 @@ pub fn ipextract(app: ArgMatches) {
     }
 }
 
-fn handle_ip(service: &str, current_ip: &str, write: bool, verbose: bool) {
-    
-    match Locator::get(current_ip, service) {
+fn handle_ip(current_ip: &str, app: ArgMatches, service: &str) {
+    // Run locator with the IP address, which returns Latitude and Longitude.
+    match Locator::ipwhois(service) {
         Ok(ipgeo) => {
-            // let curip = IPAddress {
-            //     ip: ipgeo.ip.clone(),
-            //     latitude: ipgeo.latitude.clone(),
-            //     longitude: ipgeo.longitude.clone(),
-            //     city: ipgeo.city.clone(),
-            // };
-            // {
-            let v = &mut *IP_INDEX.write().unwrap();
-            //     if !v.contains(&curip) {
-            //         if verbose {
-            //             println!("Adding {} - {} ({}, {}, {})", service.clone(), ipgeo.ip.clone(), ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
-            //         } else {
-            //             println!("{} - ({})", ipgeo.ip.clone(), ipgeo.city.clone());
-            //         }
-            //         v.push(curip);
-            //     }
-            // }
-            let m = v.iter_mut().find(|elem| elem.latitude == ipgeo.latitude && elem.longitude == ipgeo.longitude);
-                match m {
-                    Some (matchip) => {
-                        if verbose {
-                            println!("Found duplicate location for {}, adding to internal list", ipgeo.ip);
-                        }
-                        matchip.ips.push(ipgeo.ip);
+            let mut latitude_index: HashSet<String> = HashSet::new();
+            let mut longitude_index: HashSet<String> = HashSet::new();
+
+            for address in IP_INDEX.read().unwrap().iter() {
+                latitude_index.insert(address.latitude.clone());
+                longitude_index.insert(address.latitude.clone());
+            }
+
+            if !latitude_index.contains(&ipgeo.latitude.clone()) {
+                if !longitude_index.contains(&ipgeo.longitude.clone()) {
+                    let ip = ipgeo.ip.clone();
+                    let latitude = ipgeo.latitude.clone();
+                    let longitude = ipgeo.longitude.clone();
+                    let city = ipgeo.city.clone();
+
+                    IP_INDEX.write().unwrap().push(IPAddress {
+                        ip,
+                        latitude,
+                        longitude,
+                        city,
+                    });
+
+                    if app.is_present("write-to-file") {
+                        write_ip();
                     }
-                    None => {
-                        println!("Adding {} ({}, {}, {})", ipgeo.ip, ipgeo.city.clone(), ipgeo.latitude.clone(), ipgeo.longitude.clone());
-                        v.push(IPAddress {
-                            ips: vec![ipgeo.ip],
-                            city: ipgeo.city,
-                            latitude: ipgeo.latitude,
-                            longitude: ipgeo.longitude,
-                        })
-                    }
+
+                    println!("{} ({})", ipgeo.ip, ipgeo.city);
                 }
-            if write {
-                if verbose {
-                    println!("Writing to JSON to file");
-                };
-                write_ip();
-            };
+            }
         }
+        // If there was an error, send it to the logs.
         Err(error) => {
-            eprintln!("{} error: {} ({})", service, current_ip.to_string(), error);
+            eprintln!(
+                "{} error: {} ({})",
+                service,
+                current_ip.to_string(),
+                error
+            );
         }
     }
 }
