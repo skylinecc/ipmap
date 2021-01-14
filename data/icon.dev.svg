@@ -13,6 +13,9 @@
    version="1.1"
    id="svg8"
    sodipodi:docname="icon.dev.svg"
+   inkscape:export-filename="/home/grant/Projects/ipmap/data/icons/ipmap-256x256.png"
+   inkscape:export-xdpi="512"
+   inkscape:export-ydpi="512"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07, custom)">
   <defs
      id="defs2">
@@ -79,36 +82,54 @@
        id="path1329"
        inkscape:path-effect="#path-effect1331"
        inkscape:original-d="M 11.810849,7.4970768 C 11.867171,7.0979951 12.005817,6.6885942 11.979756,6.2997621 11.953695,5.91093 13.928849,3.0958614 11.901501,5.1331945 9.8741545,7.1705285 7.9838275,9.540892 6.024955,11.744707 c -1.9588729,2.203812 2.694358,-0.973649 4.0415,-1.460511"
-       sodipodi:nodetypes="csc" />
+       sodipodi:nodetypes="csc"
+       inkscape:export-filename="/home/grant/Projects/ipmap/data/icons/ipmap-24x24.png"
+       inkscape:export-xdpi="48.295563"
+       inkscape:export-ydpi="48.295563" />
     <ellipse
        style="display:inline;fill:#3584e4;stroke:#000000;stroke-width:0.855948;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none"
        id="path1317"
        cx="8.6001358"
        cy="8.6834002"
        rx="3.5930684"
-       ry="3.5415168" />
+       ry="3.5415168"
+       inkscape:export-filename="/home/grant/Projects/ipmap/data/icons/ipmap-24x24.png"
+       inkscape:export-xdpi="48.295563"
+       inkscape:export-ydpi="48.295563" />
     <path
        style="display:inline;fill:none;stroke:#000000;stroke-width:0.722956;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 1.3225284,3.3245374 c 0,0 0.9630228,2.724136 3.5066065,4.0816968"
        id="path1315"
-       sodipodi:nodetypes="cc" />
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/grant/Projects/ipmap/data/icons/ipmap-24x24.png"
+       inkscape:export-xdpi="48.295563"
+       inkscape:export-ydpi="48.295563" />
     <path
        style="display:inline;fill:none;stroke:#000000;stroke-width:0.722956;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 3.7183026,1.076212 c 0,0 2.3974701,0.9872077 3.7399151,3.6967563"
        id="path1313"
-       sodipodi:nodetypes="cc" />
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/grant/Projects/ipmap/data/icons/ipmap-24x24.png"
+       inkscape:export-xdpi="48.295563"
+       inkscape:export-ydpi="48.295563" />
     <path
        style="display:inline;fill:none;stroke:#000000;stroke-width:0.722956;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 2.9055399,10.61984 c 0,0 -0.1466961,-0.52844 -0.095904,-1.2823182 C 2.8604246,8.5836429 2.9881316,7.5398439 3.3972349,6.5009534 3.8063383,5.4620621 4.6754722,4.3501239 5.7504159,3.4950865 6.8253583,2.6400483 8.0156154,2.103791 10.063925,1.901472"
        id="path1007"
-       sodipodi:nodetypes="csssc" />
+       sodipodi:nodetypes="csssc"
+       inkscape:export-filename="/home/grant/Projects/ipmap/data/icons/ipmap-24x24.png"
+       inkscape:export-xdpi="48.295563"
+       inkscape:export-ydpi="48.295563" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:5.17847px;line-height:1.25;font-family:sans-serif;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.129463"
        x="6.2066727"
        y="10.733973"
        id="text1347"
-       transform="scale(1.0072519,0.99280035)"><tspan
+       transform="scale(1.0072519,0.99280035)"
+       inkscape:export-filename="/home/grant/Projects/ipmap/data/icons/ipmap-24x24.png"
+       inkscape:export-xdpi="48.295563"
+       inkscape:export-ydpi="48.295563"><tspan
          sodipodi:role="line"
          id="tspan1345"
          x="6.2066727"
