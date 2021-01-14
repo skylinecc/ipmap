@@ -36,4 +36,6 @@ deb-gen:
 
 clean:
 	$(HOME)/.cargo/bin/cargo clean
-	rm -rf build-* packaging/arch/pkg packaging/arch/src packaging/arch/*.tar.gz packaging/arch/*.tar.zst
+	rm -rf build-*
+	rm -rf packaging/arch/git/pkg packaging/arch/git/src packaging/arch/git/ipmap packaging/arch/git/*.tar.zst
+	rm -rf packaging/arch/normal/pkg packaging/arch/normal/src packaging/arch/normal/*.tar.gz packaging/arch/normal/*.tar.zst

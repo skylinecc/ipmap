@@ -1,7 +1,7 @@
 # Maintainer: Grant Handy <grantshandy@gmail.com>
 
-pkgname='ipmap'
-pkgver='0.1.7'
+pkgname='ipmap-git'
+pkgver='0.1.8'
 pkgrel='1'
 pkgdesc="An interactive map that shows connected IP addresses"
 arch=('x86_64')
