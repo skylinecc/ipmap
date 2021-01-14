@@ -15,11 +15,17 @@ function addMarkers(jsonText) {
 	console.log(jsonText)
 	for(var i = 0; i < jsonText.length; i++) {
 		var obj = jsonText[i];
+
 		if (alreadyAdded.has(obj.ip)) {
 			continue;
 		}
+
+		console.log(obj.ip);
+
 		document.getElementById("totalIps").innerHTML = jsonText.length + " Unique IP's";
-		L.marker([obj.latitude, obj.longitude]).addTo(ipmap).bindPopup("<b>" + obj.ips.join(", ") + "</b> - " + obj.city)
+
+		L.marker([obj.latitude, obj.longitude]).addTo(ipmap).bindPopup("<b>" + obj.ip + "</b> - " + obj.city)
+// .bindpopup(obj.ip);
 		alreadyAdded.add(obj.ip);
 	}
 }
