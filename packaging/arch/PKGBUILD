@@ -1,23 +1,25 @@
 # Maintainer: Grant Handy <grantshandy@gmail.com>
 
 pkgname='ipmap'
-pkgver='0.1.6'
+pkgver='0.1.7'
 pkgrel='1'
 pkgdesc="An interactive map that shows connected IP addresses"
 arch=('x86_64')
 url="https://skylinecc.github.io/ipmap/"
 license=('GPL')
-depends=('libpcap' 'webkit2gtk')
-makedepends=('rust' 'make')
+depends=('glibc' 'libpcap' 'webkit2gtk')
+makedepends=('rust' 'gzip')
 source=("${pkgname}-${pkgver}.tar.gz::https://github.com/skylinecc/ipmap/archive/${pkgver}.tar.gz")
-md5sums=("09b638417834a56fee6451d7b73e09c9")
+md5sums=("3ad68c460de033a2ffdea27119fd59d7")
 
 build() {
-  cd ${pkgname}-${pkgver}
-  make
+  cd "$srcdir/${pkgname}-${pkgver}"
+  cargo build --release
 }
 
 package() {
-	cd ${pkgname}-${pkgver}
-	make DESTDIR="$pkgdir/" install
+  cd "$srcdir/${pkgname}-${pkgver}"
+  install -Dm755 target/release/$pkgname $pkgdir/usr/local/sbin/$pkgname
+  install -g 0 -o 0 -Dm644 data/ipmap.1 $pkgdir/usr/share/man/man1/${pkgname}.1
+  gzip "${pkgdir}/usr/share/man/man1/${pkgname}.1"
 }
