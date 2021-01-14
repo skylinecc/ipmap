@@ -8,7 +8,7 @@ use actix_web::{
     dev::BodyEncoding, get, http::ContentEncoding, middleware, App, HttpResponse, HttpServer,
 };
 
-static ICON: &[u8] = include_bytes!("../data/icon.png");
+static ICON: &[u8] = include_bytes!("../data/icons/ipmap-64x64.png");
 
 #[actix_web::main]
 pub async fn webserv(port: u16) -> std::io::Result<()> {
