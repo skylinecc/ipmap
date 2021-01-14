@@ -1,6 +1,6 @@
-#Maintainer: Aditya Suresh ethanaditya@gmail.com
+#Maintainer: Grant Handy grantshandy@gmail.com
 pkgname='ipmap'
-pkgver='0.1.6'
+pkgver='0.1.7'
 pkgrel=1
 pkgdesc="An interactive map that shows connected IP addresses. (This is a binary package)"
 arch=('x86_64')

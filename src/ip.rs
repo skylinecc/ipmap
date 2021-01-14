@@ -75,7 +75,7 @@ pub fn ipextract(app: ArgMatches) {
                             },
                             None => {
                                 // Run locator with the IP address, which returns Latitude and Longitude.
-                                match Locator::get(current_ip.to_string().as_str(), "ipapi") {
+                                match Locator::ipapi(current_ip.to_string().as_str()) {
                                     Ok(ipgeo) => {
                                         if !latitude_index.contains(&ipgeo.longitude.to_string()) {
                                             if !longitude_index.contains(&ipgeo.longitude.to_string()) {
