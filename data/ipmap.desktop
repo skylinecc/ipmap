@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=IP Map
 Exec=pkexec /usr/local/sbin/ipmap
-Icon=/usr/share/pixmaps/ipmap.png
+Icon=ipmap
 Terminal=false
 Type=Application
 StartupNotify=true
