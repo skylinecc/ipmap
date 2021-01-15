@@ -1,4 +1,4 @@
-# Maintainer: Grant Handy <grantshandy@gmail.com>
+# Maintainer: Grant Handy <grantshandy AT gmail DOT com>
 
 _pkgname='ipmap'
 pkgname=${_pkgname}-git
@@ -12,6 +12,11 @@ depends=('glibc' 'libpcap' 'webkit2gtk' 'polkit')
 makedepends=('rust' 'gzip' 'git')
 source=("${_pkgname}::git+https://github.com/skylinecc/ipmap.git")
 md5sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/${_pkgname}"
+  git describe --tags --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
 
 build() {
   cd "$srcdir/${_pkgname}"
@@ -35,8 +40,7 @@ package() {
   # Icons
   for i in 16x16 24x24 32x32 48x48 64x64 128x128 256x256; do
       echo copying icon ${i}
-      install -Dm644 "$pkgdir"/data/icons/ipmap-${i}.png \
-          "$pkgdir"/usr/share/icons/hicolor/$i/apps/${_pkgname}.png
+      install -Dm0644 -t "$pkgdir/usr/share/icons/hicolor/$i/apps/${_pkgname}.png" "data/icons/ipmap-${i}.png"
   done
 
   # Desktop file
