@@ -1,10 +1,10 @@
 [Desktop Entry]
 Name=IP Map
 Exec=pkexec /usr/local/sbin/ipmap
-Icon=/usr/share/icons/hicolor/256x256/apps/ipmap.png
+Icon=/usr/share/pixmaps/ipmap.png
 Terminal=false
 Type=Application
 StartupNotify=true
-Categories=System;Network;Accessories;
+Categories=Network
 Keywords=ip;network;ipmap;map;
 Comment=An interactive map that shows connected IP addresses.

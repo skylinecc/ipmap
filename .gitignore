@@ -20,3 +20,8 @@ Cargo.lock
 .idea/
 
 /build-deb/
+
+/packaging/arch/git/*.zst
+/packaging/arch/git/ipmap/
+/packaging/arch/git/pkg/
+/packaging/arch/git/src/
