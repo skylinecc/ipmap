@@ -43,6 +43,8 @@ package() {
       install -Dm0644 -t "$pkgdir/usr/share/icons/hicolor/$i/apps/${_pkgname}.png" "data/icons/ipmap-${i}.png"
   done
 
+  install -Dm0644 "data/icons/ipmap-128x128.png" "$pkgdir/usr/share/pixmaps/ipmap.png"
+
   # Desktop file
   install -Dm0644 -t "$pkgdir/usr/share/applications" "data/ipmap.desktop"
 
