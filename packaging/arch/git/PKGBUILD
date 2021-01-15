@@ -2,7 +2,7 @@
 
 _pkgname='ipmap'
 pkgname=${_pkgname}-git
-pkgver=0.1.7.r8.gbef6599
+pkgver=0.1.7.r10.gf35da86
 pkgrel=1
 pkgdesc="An interactive map that shows connected IP addresses"
 arch=('x86_64')
