@@ -31,7 +31,7 @@ package() {
       "${pkgdir}"/usr/share/polkit-1/actions/org.freedesktop.policykit.${_pkgname}.policy
 
   # Binary
-  install -Dm755 target/release/$_pkgname $pkgdir/usr/local/sbin/$_pkgname
+  install -Dm755 target/release/$_pkgname $pkgdir/usr/bin/$_pkgname
 
   # Man Page
   install -g 0 -o 0 -Dm644 data/ipmap.1 $pkgdir/usr/share/man/man1/${_pkgname}.1
