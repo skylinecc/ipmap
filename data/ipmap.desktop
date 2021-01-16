@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=IP Map
-Exec=pkexec /usr/local/sbin/ipmap
+Exec=pkexec /usr/bin/ipmap
 Icon=ipmap
 Terminal=false
 Type=Application

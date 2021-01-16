@@ -5,13 +5,11 @@
 
 ## Installing 
 
-### Arch-Based Distros
-Ipmap has a package on the AUR:
-https://aur.archlinux.org/packages/ipmap/
+| Distro        | Link                      |
+| ---------     | ------------------------- |
+| Debian Linux | 10,000/month |
+| Arch Linux (AUR) | [ipmap-git](https://aur.archlinux.org/packages/ipmap-git/) |
 
-### Debian-Based Distros
-Ipmap has .deb packages on the release pages:
-https://github.com/skylinecc/ipmap/releases
 
 ## Building From Scratch
 
